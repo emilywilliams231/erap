@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Received | GOV-ASSIST</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        .success-box {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: 100px auto;
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #c6f6d5;
+            color: #2f855a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-box reveal active">
+            <div class="icon-circle">✓</div>
+            <h1 style="color: var(--primary); margin-bottom: 20px;">Application Submitted</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                Thank you for submitting your application. A case officer will review your information and contact you via email within 3-5 business days.
+            </p>
+            <p style="font-weight: 600; margin-bottom: 30px;">Reference Number: <span id="ref-num">...</span></p>
+            <a href="index.html" class="btn btn-primary" style="background: var(--primary); color: white;">Return to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Generate a random reference number
+        document.getElementById('ref-num').innerText = 'GA-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    </script>
+</body>
+</html>
