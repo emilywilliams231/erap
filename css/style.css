@@ -337,9 +337,7 @@ nav {
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 70px;
-    z-index: 900;
+    position: static;
 }
 
 .stepper .step {
@@ -719,14 +717,12 @@ footer {
 }
 
 .sticky-submit {
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(180deg, rgba(247,250,252,0.96) 0%, rgba(255,255,255,0.98) 100%);
-    padding: 16px 12px 12px 12px;
+    position: static;
+    background: transparent;
+    padding: 0;
     margin-top: 24px;
-    box-shadow: 0 -6px 20px rgba(0,0,0,0.06);
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    box-shadow: none;
+    border: none;
 }
 
 .btn-submit:disabled {
