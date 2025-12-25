@@ -17,21 +17,80 @@
         </div>
     </nav>
 
-    <header class="hero" style="padding: 60px 0 100px 0;">
+    <header class="hero patterned" style="padding: 60px 0 110px 0;">
         <div class="container">
-            <h1>ERAP Application</h1>
-            <p>Submit a complete Emergency Rental Assistance request with full SSN and documentation for faster review.</p>
+            <div class="hero-grid">
+                <div>
+                    <h1>ERAP Application</h1>
+                    <p>Submit a complete Emergency Rental Assistance request with full SSN and documentation for faster review.</p>
+                    <div class="trust-badges">
+                        <span class="badge">Encrypted submission</span>
+                        <span class="badge">2–14 day review window</span>
+                        <span class="badge">Direct-to-landlord payments</span>
+                    </div>
+                </div>
+                <div class="hero-panel glass">
+                    <p class="panel-title">What you’ll need</p>
+                    <ul class="compact-list">
+                        <li>Government ID and full SSN</li>
+                        <li>Lease, proof of income, and arrears details</li>
+                        <li>Landlord contact and acceptance confirmation</li>
+                        <li>Attestations and digital signature</li>
+                    </ul>
+                    <div class="time-chip">Est. time: 6–8 minutes</div>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="container">
-        <div class="progress-indicator">
-            <span class="progress-dot"></span>
-            <span>Step 1 of 6: Complete your ERAP application</span>
+        <div class="progress-indicator stepper" aria-label="Form progress">
+            <button class="step active" type="button" data-target="#erap-applicant">1. Applicant</button>
+            <button class="step" type="button" data-target="#erap-household">2. Household</button>
+            <button class="step" type="button" data-target="#erap-rental">3. Rental</button>
+            <button class="step" type="button" data-target="#erap-financial">4. Assistance</button>
+            <button class="step" type="button" data-target="#erap-uploads">5. Uploads</button>
+            <button class="step" type="button" data-target="#erap-attestation">6. Attestation</button>
+            <button class="step" type="button" data-target="#erap-signature">7. Signature</button>
         </div>
         <form action="includes/process-erap.php" method="POST" class="form-card" id="erap-form" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="csrf_token" id="csrf_token" value="">
-            <fieldset class="form-section">
+            <div class="readiness-card">
+                <h2>Before you start</h2>
+                <p class="helper-text">Have these items nearby to finish faster and avoid pauses.</p>
+                <div class="readiness-grid">
+                    <div class="readiness-item">
+                        <span class="icon">📄</span>
+                        <div>
+                            <p class="title">Identity + SSN</p>
+                            <p class="description">Match the name on your ID and enter the full 9-digit SSN.</p>
+                        </div>
+                    </div>
+                    <div class="readiness-item">
+                        <span class="icon">🏠</span>
+                        <div>
+                            <p class="title">Lease & arrears</p>
+                            <p class="description">Current rent, months past due, and total arrears.</p>
+                        </div>
+                    </div>
+                    <div class="readiness-item">
+                        <span class="icon">📞</span>
+                        <div>
+                            <p class="title">Landlord details</p>
+                            <p class="description">Full contact info and acceptance of direct payment.</p>
+                        </div>
+                    </div>
+                    <div class="readiness-item">
+                        <span class="icon">🧾</span>
+                        <div>
+                            <p class="title">Proofs to upload</p>
+                            <p class="description">ID, income docs, lease, eviction or past-due notice, utilities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="form-section" id="erap-applicant" data-step="1">
                 <legend class="form-legend">Applicant Information</legend>
                 <p class="helper-text">Ensure your name matches your government-issued ID.</p>
                 <div class="form-grid">
@@ -84,7 +143,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-household" data-step="2">
                 <legend class="form-legend">Household / Income</legend>
                 <p class="helper-text">Provide current household composition and sources of income.</p>
                 <div class="form-grid">
@@ -124,7 +183,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-rental" data-step="3">
                 <legend class="form-legend">Property or Rental Details</legend>
                 <p class="helper-text">Tell us about your lease and current rental obligations.</p>
                 <div class="form-grid">
@@ -151,7 +210,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-financial" data-step="4">
                 <legend class="form-legend">Financial Details</legend>
                 <p class="helper-text">Select all assistance categories you are requesting.</p>
                 <div class="form-grid">
@@ -217,54 +276,59 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-uploads" data-step="5">
                 <legend class="form-legend">Upload Documents</legend>
                 <p class="helper-text">Upload clear images or PDFs. Drag and drop or click to upload.</p>
                 <div class="upload-grid">
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Government-issued ID *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">PDF, JPG, PNG • Max 25MB</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="id_document" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
                         <small class="file-name">No file chosen</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Proof of Income *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Paystubs, award letters • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="income_proof" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
                         <small class="file-name">No file chosen</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Lease or Rental Agreement *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">PDF, JPG, PNG • Include all pages</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="lease_agreement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
                         <small class="file-name">No file chosen</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Eviction or Past-Due Notice *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Court/landlord notice • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="eviction_notice" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
                         <small class="file-name">No file chosen</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Utility Bills</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Attach latest statements • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ Files selected</span>
                         <input type="file" name="utility_bills[]" accept=".pdf,.jpg,.jpeg,.png" multiple data-file-input>
                         <small class="file-name">No files chosen</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-attestation" data-step="6">
                 <legend class="form-legend">Authorization &amp; Attestation</legend>
                 <p class="helper-text">Attest to the accuracy of your submission and allow program staff to coordinate payment.</p>
                 <div class="form-grid">
@@ -292,7 +356,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="erap-signature" data-step="7">
                 <legend class="form-legend">Signature &amp; Submission</legend>
                 <p class="helper-text">Type your name and sign electronically to submit.</p>
                 <div class="form-grid">
@@ -310,6 +374,7 @@
             </fieldset>
 
             <div class="sticky-submit">
+                <div class="form-status" aria-live="polite">Checking required fields…</div>
                 <button type="submit" class="btn btn-submit" disabled>Submit Official Application</button>
                 <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
                     By submitting, you certify that all information provided is true and accurate.

@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!form) return;
 
         const submitBtn = form.querySelector('.btn-submit');
+        const statusEl = form.querySelector('.form-status');
 
         const runValidation = (e) => {
             let isValid = true;
@@ -92,6 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (submitBtn) submitBtn.disabled = !isValid;
+            if (statusEl) {
+                const errors = form.querySelectorAll('.input-error').length;
+                if (isValid) {
+                    statusEl.textContent = 'All required items complete. Ready to submit.';
+                    statusEl.style.color = 'var(--success)';
+                } else {
+                    statusEl.textContent = `${errors || 'Some'} required item${errors === 1 ? '' : 's'} remaining.`;
+                    statusEl.style.color = 'var(--text-muted)';
+                }
+            }
             return isValid;
         };
 
@@ -112,10 +123,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
             }
         });
+
+        runValidation();
     };
 
     validateForm('erap-form');
     validateForm('heloc-form');
+
+    // Stepper navigation and active state
+    const initStepper = (formId) => {
+        const form = document.getElementById(formId);
+        const stepper = document.querySelector('.stepper');
+        if (!form || !stepper) return;
+
+        const stepButtons = stepper.querySelectorAll('.step');
+        const sections = form.querySelectorAll('[data-step]');
+
+        stepButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.querySelector(btn.dataset.target);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        const handleActiveStep = () => {
+            let currentId = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 140 && rect.bottom >= 140) {
+                    currentId = `#${section.id}`;
+                }
+            });
+            stepButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === currentId);
+            });
+        };
+
+        window.addEventListener('scroll', handleActiveStep);
+        handleActiveStep();
+    };
+
+    initStepper('erap-form');
+    initStepper('heloc-form');
 
     // 3. Header Scroll Effect
     const nav = document.querySelector('nav');
@@ -188,7 +239,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. CSRF token fetch
+    // 7. Clear file buttons
+    document.querySelectorAll('.upload-card').forEach(card => {
+        const clearBtn = card.querySelector('.clear-file');
+        const input = card.querySelector('input[type="file"]');
+        if (clearBtn && input) {
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                input.dispatchEvent(new Event('change'));
+            });
+        }
+    });
+
+    // 8. CSRF token fetch
     fetch('includes/csrf-token.php')
         .then(res => res.json())
         .then(data => {
