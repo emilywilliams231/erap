@@ -14,8 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
-                // Optional: Unobserve after animation is triggered
-                // observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
@@ -31,22 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
             let isValid = true;
             const requiredInputs = form.querySelectorAll('[required]');
             
-            // Clear previous errors if any (simple visual reset)
             requiredInputs.forEach(input => {
                 input.style.borderColor = '#e2e8f0';
                 input.style.backgroundColor = '#fdfdfd';
+                input.classList.remove('input-error');
             });
 
             requiredInputs.forEach(input => {
-                const value = input.value.trim();
+                const value = (input.type === 'checkbox') ? (input.checked ? 'checked' : '') : input.value.trim();
                 
-                // General empty check
                 if (!value) {
                     markInvalid(input);
                     isValid = false;
                 }
 
-                // Email specific validation
                 if (input.type === 'email' && value) {
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(value)) {
@@ -55,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Phone specific validation
                 if (input.type === 'tel' && value) {
                     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                     if (!phoneRegex.test(value)) {
@@ -64,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                // SSN specific validation (9 digits or XXX-XX-XXXX)
                 if (input.id === 'ssn' && value) {
                     const ssnRegex = /^(\d{3}-\d{2}-\d{4})|(\d{9})$/;
                     if (!ssnRegex.test(value)) {
@@ -74,11 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Ensure at least one utility assistance checkbox if section exists
+            const utilityGroups = form.querySelectorAll('.utility-options');
+            utilityGroups.forEach(group => {
+                const boxes = group.querySelectorAll('input[type="checkbox"]');
+                const anyChecked = Array.from(boxes).some(box => box.checked);
+                if (!anyChecked) {
+                    boxes.forEach(box => markInvalid(box));
+                    isValid = false;
+                }
+            });
+
             if (!isValid) {
                 e.preventDefault();
                 alert('Please correct the highlighted fields before submitting.');
                 
-                // Scroll to first error
                 const firstError = form.querySelector('.input-error');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -93,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         input.classList.add('input-error');
     };
 
-    // Initialize validations
     validateForm('erap-form');
     validateForm('heloc-form');
 
@@ -107,5 +110,34 @@ document.addEventListener('DOMContentLoaded', () => {
             nav.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
             nav.style.padding = '15px 0';
         }
+    });
+
+    // 4. Accordions
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+        trigger.addEventListener('click', () => {
+            const expanded = trigger.getAttribute('aria-expanded') === 'true';
+            trigger.setAttribute('aria-expanded', String(!expanded));
+            const content = trigger.nextElementSibling;
+            if (content) {
+                content.classList.toggle('open', !expanded);
+            }
+        });
+    });
+
+    // 5. File input labels
+    document.querySelectorAll('[data-file-input]').forEach(input => {
+        input.addEventListener('change', (event) => {
+            const target = event.target;
+            const container = target.closest('.upload-card');
+            const label = container ? container.querySelector('.file-name') : null;
+            if (!label) return;
+
+            if (target.files && target.files.length > 0) {
+                const names = Array.from(target.files).map(f => f.name).join(', ');
+                label.textContent = names;
+            } else {
+                label.textContent = 'No file chosen';
+            }
+        });
     });
 });
