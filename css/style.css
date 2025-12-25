@@ -680,6 +680,25 @@ input::placeholder {
     color: var(--accent);
 }
 
+.upload-card .clear-file {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.upload-card .clear-file:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
 .upload-card input {
     margin-top: 10px;
     opacity: 1;
