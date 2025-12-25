@@ -257,7 +257,7 @@ nav {
     display: flex;
     gap: 10px;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     font-weight: 700;
     color: var(--primary);
 }
@@ -329,7 +329,7 @@ nav {
 /* Forms */
 .form-card {
     background: var(--white);
-    padding: 45px;
+    padding: 32px;
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.08);
     margin-top: 20px;
@@ -364,10 +364,10 @@ nav {
 fieldset {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px;
     background: #fbfdff;
     box-shadow: 0 10px 24px rgba(0,0,0,0.04);
-    margin-bottom: 24px;
+    margin-bottom: 40px;
 }
 
 .form-section + .form-section,
@@ -409,17 +409,20 @@ label {
 }
 
 .checkbox-label {
-    display: block;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
     font-weight: 600;
     color: var(--text-dark);
     line-height: 1.5;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
 }
 
 .checkbox-label input[type="checkbox"],
 .checkbox-label input[type="radio"] {
-    margin-right: 10px;
-    transform: translateY(2px);
+    margin-left: auto;
+    margin-top: 2px;
 }
 
 input, select, textarea {
@@ -463,6 +466,7 @@ input::placeholder {
     gap: 18px;
     margin-top: 10px;
     clear: both;
+    margin-bottom: 10px;
 }
 
 .upload-card {
@@ -518,12 +522,11 @@ footer {
 }
 
 .sticky-submit {
-    position: sticky;
-    bottom: 0;
+    position: static;
     background: #ffffff;
-    padding: 16px 0 0 0;
-    margin-top: 16px;
-    box-shadow: 0 -4px 18px rgba(0,0,0,0.06);
+    padding: 0;
+    margin-top: 24px;
+    box-shadow: none;
 }
 
 .btn-submit:disabled {

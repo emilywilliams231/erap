@@ -173,12 +173,12 @@
                     <div class="form-group full-width">
                         <label>Utility Assistance Requested *</label>
                         <div class="utility-options">
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Electric"> Electric</label>
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Gas"> Gas</label>
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Water"> Water</label>
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Sewer"> Sewer</label>
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Trash"> Trash</label>
-                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Other"> Other</label>
+                            <label class="checkbox-label"><span>Electric</span><input type="checkbox" name="utility_assistance[]" value="Electric"></label>
+                            <label class="checkbox-label"><span>Gas</span><input type="checkbox" name="utility_assistance[]" value="Gas"></label>
+                            <label class="checkbox-label"><span>Water</span><input type="checkbox" name="utility_assistance[]" value="Water"></label>
+                            <label class="checkbox-label"><span>Sewer</span><input type="checkbox" name="utility_assistance[]" value="Sewer"></label>
+                            <label class="checkbox-label"><span>Trash</span><input type="checkbox" name="utility_assistance[]" value="Trash"></label>
+                            <label class="checkbox-label"><span>Other</span><input type="checkbox" name="utility_assistance[]" value="Other"></label>
                         </div>
                         <span class="inline-error">Select at least one utility type.</span>
                     </div>
@@ -209,8 +209,8 @@
                     </div>
                     <div class="form-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="landlord_accepts_payments" value="Yes" required>
                             <span>I confirm my landlord/property manager will accept direct payment</span>
+                            <input type="checkbox" name="landlord_accepts_payments" value="Yes" required>
                         </label>
                         <span class="inline-error">Please confirm landlord acceptance.</span>
                     </div>
@@ -269,15 +269,15 @@
                 <p class="helper-text">Attest to the accuracy of your submission and allow program staff to coordinate payment.</p>
                 <div class="form-grid">
                     <div class="form-group full-width">
-                        <label class="checkbox-label"><input type="checkbox" name="contact_authorization" value="Yes" required> I authorize the program to contact my landlord/property manager for verification and payment routing.</label>
+                        <label class="checkbox-label"><span>I authorize the program to contact my landlord/property manager for verification and payment routing.</span><input type="checkbox" name="contact_authorization" value="Yes" required></label>
                         <span class="inline-error">Authorization is required.</span>
                     </div>
                     <div class="form-group full-width">
-                        <label class="checkbox-label"><input type="checkbox" name="accuracy_certification" value="Yes" required> I certify under penalty of perjury that all information and uploads are true, complete, and correct.</label>
+                        <label class="checkbox-label"><span>I certify under penalty of perjury that all information and uploads are true, complete, and correct.</span><input type="checkbox" name="accuracy_certification" value="Yes" required></label>
                         <span class="inline-error">Certification is required.</span>
                     </div>
                     <div class="form-group full-width">
-                        <label class="checkbox-label"><input type="checkbox" name="attestation" value="Yes" required> I understand that misrepresentation may result in denial, repayment, or penalties.</label>
+                        <label class="checkbox-label"><span>I understand that misrepresentation may result in denial, repayment, or penalties.</span><input type="checkbox" name="attestation" value="Yes" required></label>
                         <span class="inline-error">Attestation is required.</span>
                     </div>
                 </div>
