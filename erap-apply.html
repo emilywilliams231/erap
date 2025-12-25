@@ -25,234 +25,287 @@
     </header>
 
     <main class="container">
-        <form action="includes/process-erap.php" method="POST" class="form-card" id="erap-form" enctype="multipart/form-data">
-            <div class="form-header">
-                <h2>Applicant Information</h2>
-                <p>Ensure your name matches your government-issued ID.</p>
-            </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="full_name">Full Legal Name *</label>
-                    <input type="text" id="full_name" name="full_name" required placeholder="John Q. Public">
-                </div>
-                <div class="form-group">
-                    <label for="date_of_birth">Date of Birth *</label>
-                    <input type="date" id="date_of_birth" name="date_of_birth" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required placeholder="name@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="(555) 000-0000">
-                </div>
-                <div class="form-group">
-                    <label for="ssn">Social Security Number (Full 9 digits) *</label>
-                    <input type="text" id="ssn" name="ssn" required pattern="^(\\d{3}-\\d{2}-\\d{4})|(\\d{9})$" placeholder="123-45-6789">
-                    <small class="helper-text">Full SSN is required for eligibility verification and will be transmitted securely.</small>
-                </div>
-                <div class="form-group">
-                    <label for="address">Street Address *</label>
-                    <input type="text" id="address" name="address" required placeholder="123 Main St, Apt 4B">
-                </div>
-                <div class="form-group">
-                    <label for="city">City *</label>
-                    <input type="text" id="city" name="city" required>
-                </div>
-                <div class="form-group">
-                    <label for="state">State *</label>
-                    <input type="text" id="state" name="state" required maxlength="2" placeholder="CA">
-                </div>
-                <div class="form-group">
-                    <label for="zip">Zip Code *</label>
-                    <input type="text" id="zip" name="zip" required pattern="[0-9]{5}">
-                </div>
-            </div>
-
-            <div class="form-header">
-                <h2>Household & Income</h2>
-                <p>Provide current household composition and sources of income.</p>
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="employment_status">Employment Status *</label>
-                    <select id="employment_status" name="employment_status" required>
-                        <option value="">Select status</option>
-                        <option>Employed full-time</option>
-                        <option>Employed part-time</option>
-                        <option>Self-employed</option>
-                        <option>Unemployed</option>
-                        <option>Retired</option>
-                        <option>Student</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="employer_name">Employer Name</label>
-                    <input type="text" id="employer_name" name="employer_name" placeholder="Company or business name">
-                </div>
-                <div class="form-group">
-                    <label for="household_size">Household Size *</label>
-                    <input type="number" id="household_size" name="household_size" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="income">Annual Household Income ($) *</label>
-                    <input type="number" id="income" name="income" required min="0">
-                </div>
-                <div class="form-group full-width">
-                    <label for="income_sources">Income Sources *</label>
-                    <input type="text" id="income_sources" name="income_sources" required placeholder="Wages, unemployment, benefits, etc.">
-                </div>
-            </div>
-
-            <div class="form-header">
-                <h2>Rental Details</h2>
-                <p>Tell us about your lease and current rental obligations.</p>
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="current_rent">Current Monthly Rent ($) *</label>
-                    <input type="number" id="current_rent" name="current_rent" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="months_past_due">Months Past Due *</label>
-                    <input type="number" id="months_past_due" name="months_past_due" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="total_arrears">Total Arrears ($) *</label>
-                    <input type="number" id="total_arrears" name="total_arrears" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="future_rent">Future Rent Requested ($) *</label>
-                    <input type="number" id="future_rent" name="future_rent" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="total_assistance">Total Assistance Requested ($) *</label>
-                    <input type="number" id="total_assistance" name="total_assistance" required min="0">
-                </div>
-                <div class="form-group full-width">
-                    <label for="hardship">Describe your financial hardship *</label>
-                    <textarea id="hardship" name="hardship" rows="4" required placeholder="Explain how COVID-19 or economic hardship impacted your ability to pay rent or utilities."></textarea>
-                </div>
-            </div>
-
-            <div class="form-header">
-                <h2>Landlord / Property Manager</h2>
-                <p>We will contact your housing provider for verification and payment routing.</p>
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="landlord_name">Full Name *</label>
-                    <input type="text" id="landlord_name" name="landlord_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="landlord_phone">Phone Number *</label>
-                    <input type="tel" id="landlord_phone" name="landlord_phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="landlord_email">Email Address *</label>
-                    <input type="email" id="landlord_email" name="landlord_email" required>
-                </div>
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="landlord_accepts_payments" value="Yes" required>
-                        <span>I confirm my landlord/property manager will accept direct payment</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-header">
-                <h2>Assistance Details</h2>
-                <p>Select the assistance categories you are requesting.</p>
-            </div>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="rent_past_due">Rent Assistance (Past Due) ($) *</label>
-                    <input type="number" id="rent_past_due" name="rent_past_due" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="rent_future">Rent Assistance (Future) ($) *</label>
-                    <input type="number" id="rent_future" name="rent_future" min="0" required>
-                </div>
-                <div class="form-group full-width">
-                    <label>Utility Assistance Requested *</label>
-                    <div class="utility-options">
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Electric"> Electric</label>
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Gas"> Gas</label>
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Water"> Water</label>
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Sewer"> Sewer</label>
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Trash"> Trash</label>
-                        <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Other"> Other</label>
+        <div class="progress-indicator">
+            <span class="progress-dot"></span>
+            <span>Step 1 of 6: Complete your ERAP application</span>
+        </div>
+        <form action="includes/process-erap.php" method="POST" class="form-card" id="erap-form" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="csrf_token" id="csrf_token" value="">
+            <fieldset>
+                <legend class="form-legend">Applicant Information</legend>
+                <p class="helper-text">Ensure your name matches your government-issued ID.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="full_name">Full Legal Name *</label>
+                        <input type="text" id="full_name" name="full_name" required placeholder="John Q. Public">
+                        <span class="inline-error">Full legal name is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth *</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" required>
+                        <span class="inline-error">Date of birth is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required placeholder="name@example.com">
+                        <span class="inline-error">Valid email is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="(555) 000-0000">
+                        <span class="inline-error">Enter a valid phone number.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn">Social Security Number (Full 9 digits) *</label>
+                        <input type="text" id="ssn" name="ssn" required pattern="^(\\d{3}-\\d{2}-\\d{4})|(\\d{9})$" placeholder="123-45-6789">
+                        <small class="helper-text">Full SSN is required for eligibility verification and will be transmitted securely.</small>
+                        <span class="inline-error">Enter a 9-digit SSN.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Street Address *</label>
+                        <input type="text" id="address" name="address" required placeholder="123 Main St, Apt 4B">
+                        <span class="inline-error">Street address is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" required>
+                        <span class="inline-error">City is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State *</label>
+                        <input type="text" id="state" name="state" required maxlength="2" placeholder="CA">
+                        <span class="inline-error">State abbreviation is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">Zip Code *</label>
+                        <input type="text" id="zip" name="zip" required pattern="[0-9]{5}">
+                        <span class="inline-error">5-digit ZIP required.</span>
                     </div>
                 </div>
-                <div class="form-group full-width">
-                    <label for="assistance_total">Total Amount Requested (All Categories) ($) *</label>
-                    <input type="number" id="assistance_total" name="assistance_total" min="0" required>
-                </div>
-            </div>
+            </fieldset>
 
-            <div class="form-header">
-                <h2>Required Uploads</h2>
-                <p>Upload clear images or PDFs. File names appear after selection.</p>
-            </div>
-            <div class="upload-grid">
-                <label class="upload-card">
-                    <span>Government-issued ID *</span>
-                    <input type="file" name="id_document" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                    <small class="file-name">No file chosen</small>
-                </label>
-                <label class="upload-card">
-                    <span>Proof of Income *</span>
-                    <input type="file" name="income_proof" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                    <small class="file-name">No file chosen</small>
-                </label>
-                <label class="upload-card">
-                    <span>Lease or Rental Agreement *</span>
-                    <input type="file" name="lease_agreement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                    <small class="file-name">No file chosen</small>
-                </label>
-                <label class="upload-card">
-                    <span>Eviction or Past-Due Notice *</span>
-                    <input type="file" name="eviction_notice" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                    <small class="file-name">No file chosen</small>
-                </label>
-                <label class="upload-card">
-                    <span>Utility Bills</span>
-                    <input type="file" name="utility_bills[]" accept=".pdf,.jpg,.jpeg,.png" multiple data-file-input>
-                    <small class="file-name">No files chosen</small>
-                </label>
-            </div>
+            <fieldset>
+                <legend class="form-legend">Household / Income</legend>
+                <p class="helper-text">Provide current household composition and sources of income.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="employment_status">Employment Status *</label>
+                        <select id="employment_status" name="employment_status" required>
+                            <option value="">Select status</option>
+                            <option>Employed full-time</option>
+                            <option>Employed part-time</option>
+                            <option>Self-employed</option>
+                            <option>Unemployed</option>
+                            <option>Retired</option>
+                            <option>Student</option>
+                            <option>Other</option>
+                        </select>
+                        <span class="inline-error">Employment status is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="employer_name">Employer Name</label>
+                        <input type="text" id="employer_name" name="employer_name" placeholder="Company or business name">
+                    </div>
+                    <div class="form-group">
+                        <label for="household_size">Household Size *</label>
+                        <input type="number" id="household_size" name="household_size" min="1" required>
+                        <span class="inline-error">Household size is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Annual Household Income ($) *</label>
+                        <input type="number" id="income" name="income" required min="0">
+                        <span class="inline-error">Annual income is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="income_sources">Income Sources *</label>
+                        <input type="text" id="income_sources" name="income_sources" required placeholder="Wages, unemployment, benefits, etc.">
+                        <span class="inline-error">Income sources are required.</span>
+                    </div>
+                </div>
+            </fieldset>
 
-            <div class="form-header">
-                <h2>Verification & Consent</h2>
-                <p>Attest to the accuracy of your submission and allow program staff to coordinate payment.</p>
-            </div>
-            <div class="form-grid">
-                <div class="form-group full-width">
-                    <label class="checkbox-label"><input type="checkbox" name="contact_authorization" value="Yes" required> I authorize the program to contact my landlord/property manager for verification and payment routing.</label>
+            <fieldset>
+                <legend class="form-legend">Property or Rental Details</legend>
+                <p class="helper-text">Tell us about your lease and current rental obligations.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="current_rent">Current Monthly Rent ($) *</label>
+                        <input type="number" id="current_rent" name="current_rent" required min="0">
+                        <span class="inline-error">Current rent is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="months_past_due">Months Past Due *</label>
+                        <input type="number" id="months_past_due" name="months_past_due" required min="0">
+                        <span class="inline-error">Months past due is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="total_arrears">Total Arrears ($) *</label>
+                        <input type="number" id="total_arrears" name="total_arrears" required min="0">
+                        <span class="inline-error">Total arrears are required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="future_rent">Future Rent Requested ($) *</label>
+                        <input type="number" id="future_rent" name="future_rent" required min="0">
+                        <span class="inline-error">Future rent amount is required.</span>
+                    </div>
                 </div>
-                <div class="form-group full-width">
-                    <label class="checkbox-label"><input type="checkbox" name="accuracy_certification" value="Yes" required> I certify under penalty of perjury that all information and uploads are true, complete, and correct.</label>
-                </div>
-                <div class="form-group full-width">
-                    <label class="checkbox-label"><input type="checkbox" name="attestation" value="Yes" required> I understand that misrepresentation may result in denial, repayment, or penalties.</label>
-                </div>
-                <div class="form-group">
-                    <label for="digital_signature">Digital Signature (Type Full Name) *</label>
-                    <input type="text" id="digital_signature" name="digital_signature" required>
-                </div>
-                <div class="form-group">
-                    <label for="signature_date">Date *</label>
-                    <input type="date" id="signature_date" name="signature_date" required>
-                </div>
-            </div>
+            </fieldset>
 
-            <button type="submit" class="btn btn-submit">Submit Official Application</button>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted);">
-                By submitting, you certify that all information provided is true and accurate.
-            </p>
+            <fieldset>
+                <legend class="form-legend">Financial Details</legend>
+                <p class="helper-text">Select all assistance categories you are requesting.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="total_assistance">Total Assistance Requested ($) *</label>
+                        <input type="number" id="total_assistance" name="total_assistance" required min="0">
+                        <span class="inline-error">Total assistance is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="rent_past_due">Rent Assistance (Past Due) ($) *</label>
+                        <input type="number" id="rent_past_due" name="rent_past_due" min="0" required>
+                        <span class="inline-error">Past due rent request required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="rent_future">Rent Assistance (Future) ($) *</label>
+                        <input type="number" id="rent_future" name="rent_future" min="0" required>
+                        <span class="inline-error">Future rent request required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Utility Assistance Requested *</label>
+                        <div class="utility-options">
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Electric"> Electric</label>
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Gas"> Gas</label>
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Water"> Water</label>
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Sewer"> Sewer</label>
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Trash"> Trash</label>
+                            <label class="checkbox-label"><input type="checkbox" name="utility_assistance[]" value="Other"> Other</label>
+                        </div>
+                        <span class="inline-error">Select at least one utility type.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="assistance_total">Total Amount Requested (All Categories) ($) *</label>
+                        <input type="number" id="assistance_total" name="assistance_total" min="0" required>
+                        <span class="inline-error">Combined request total required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="hardship">Describe your financial hardship *</label>
+                        <textarea id="hardship" name="hardship" rows="4" required placeholder="Explain how COVID-19 or economic hardship impacted your ability to pay rent or utilities."></textarea>
+                        <span class="inline-error">Hardship statement is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="landlord_name">Landlord / Property Manager Full Name *</label>
+                        <input type="text" id="landlord_name" name="landlord_name" required>
+                        <span class="inline-error">Landlord name is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="landlord_phone">Landlord Phone Number *</label>
+                        <input type="tel" id="landlord_phone" name="landlord_phone" required>
+                        <span class="inline-error">Landlord phone required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="landlord_email">Landlord Email Address *</label>
+                        <input type="email" id="landlord_email" name="landlord_email" required>
+                        <span class="inline-error">Landlord email required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="landlord_accepts_payments" value="Yes" required>
+                            <span>I confirm my landlord/property manager will accept direct payment</span>
+                        </label>
+                        <span class="inline-error">Please confirm landlord acceptance.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="form-legend">Upload Documents</legend>
+                <p class="helper-text">Upload clear images or PDFs. Drag and drop or click to upload.</p>
+                <div class="upload-grid">
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Government-issued ID *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="id_document" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Proof of Income *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="income_proof" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Lease or Rental Agreement *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="lease_agreement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Eviction or Past-Due Notice *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="eviction_notice" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Utility Bills</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ Files selected</span>
+                        <input type="file" name="utility_bills[]" accept=".pdf,.jpg,.jpeg,.png" multiple data-file-input>
+                        <small class="file-name">No files chosen</small>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="form-legend">Authorization &amp; Attestation</legend>
+                <p class="helper-text">Attest to the accuracy of your submission and allow program staff to coordinate payment.</p>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><input type="checkbox" name="contact_authorization" value="Yes" required> I authorize the program to contact my landlord/property manager for verification and payment routing.</label>
+                        <span class="inline-error">Authorization is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><input type="checkbox" name="accuracy_certification" value="Yes" required> I certify under penalty of perjury that all information and uploads are true, complete, and correct.</label>
+                        <span class="inline-error">Certification is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><input type="checkbox" name="attestation" value="Yes" required> I understand that misrepresentation may result in denial, repayment, or penalties.</label>
+                        <span class="inline-error">Attestation is required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="form-legend">Signature &amp; Submission</legend>
+                <p class="helper-text">Type your name and sign electronically to submit.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="digital_signature">Digital Signature (Type Full Name) *</label>
+                        <input type="text" id="digital_signature" name="digital_signature" required>
+                        <span class="inline-error">Digital signature required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="signature_date">Date *</label>
+                        <input type="date" id="signature_date" name="signature_date" required>
+                        <span class="inline-error">Date required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="sticky-submit">
+                <button type="submit" class="btn btn-submit" disabled>Submit Official Application</button>
+                <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                    By submitting, you certify that all information provided is true and accurate.
+                </p>
+            </div>
         </form>
     </main>
 

