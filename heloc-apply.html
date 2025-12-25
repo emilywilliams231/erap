@@ -20,65 +20,331 @@
     <header class="hero" style="background: linear-gradient(135deg, #102a43 0%, #2c5282 100%); padding: 60px 0 100px 0;">
         <div class="container">
             <h1>HELOC Application</h1>
-            <p>Access the value of your home with our competitive credit lines.</p>
+            <p>Access the value of your home with our detailed credit line intake. Provide full SSN and documents for a compliant review.</p>
         </div>
     </header>
 
     <main class="container">
-        <form action="includes/process-heloc.php" method="POST" class="form-card" id="heloc-form">
-            <div class="form-header">
-                <h2>Homeowner Details</h2>
-                <p>Provide property and financial information for pre-qualification.</p>
+        <div class="progress-indicator">
+            <span class="progress-dot"></span>
+            <span>Step 1 of 6: Complete your HELOC application</span>
+        </div>
+        <form action="includes/process-heloc.php" method="POST" class="form-card" id="heloc-form" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="csrf_token" id="csrf_token_heloc" value="">
+            <fieldset class="form-section">
+                <legend class="form-legend">Applicant Information</legend>
+                <p class="helper-text">Confirm personal identifiers exactly as they appear on your ID.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="full_name">Full Legal Name *</label>
+                        <input type="text" id="full_name" name="full_name" required>
+                        <span class="inline-error">Full legal name is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth *</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" required>
+                        <span class="inline-error">Date of birth is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <span class="inline-error">Valid phone number is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                        <span class="inline-error">Valid email required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn">Social Security Number (Full 9 digits) *</label>
+                        <input type="text" id="ssn" name="ssn" required pattern="^(\\d{3}-\\d{2}-\\d{4})|(\\d{9})$" placeholder="123-45-6789">
+                        <small class="helper-text">Full SSN is required and transmitted securely.</small>
+                        <span class="inline-error">Enter a 9-digit SSN.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="gov_id_number">Government ID Number *</label>
+                        <input type="text" id="gov_id_number" name="gov_id_number" required placeholder="Driver license or state ID number">
+                        <span class="inline-error">Government ID number required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="issuing_state">Issuing State *</label>
+                        <input type="text" id="issuing_state" name="issuing_state" maxlength="2" required placeholder="CA">
+                        <span class="inline-error">Issuing state required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_expiration">ID Expiration Date *</label>
+                        <input type="date" id="id_expiration" name="id_expiration" required>
+                        <span class="inline-error">Expiration date required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Household / Income</legend>
+                <p class="helper-text">Document current employment and recurring income.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="employment_status">Employment Status *</label>
+                        <select id="employment_status" name="employment_status" required>
+                            <option value="">Select status</option>
+                            <option>Employed full-time</option>
+                            <option>Employed part-time</option>
+                            <option>Self-employed</option>
+                            <option>Unemployed</option>
+                            <option>Retired</option>
+                            <option>Student</option>
+                            <option>Other</option>
+                        </select>
+                        <span class="inline-error">Employment status required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="employer_name">Employer Name *</label>
+                        <input type="text" id="employer_name" name="employer_name" required>
+                        <span class="inline-error">Employer name required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="job_title">Job Title *</label>
+                        <input type="text" id="job_title" name="job_title" required>
+                        <span class="inline-error">Job title required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="employment_length">Length of Employment (years) *</label>
+                        <input type="number" id="employment_length" name="employment_length" min="0" step="0.1" required>
+                        <span class="inline-error">Employment length required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="gross_monthly_income">Gross Monthly Income ($) *</label>
+                        <input type="number" id="gross_monthly_income" name="gross_monthly_income" min="0" required>
+                        <span class="inline-error">Gross monthly income required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="other_income_sources">Other Income Sources</label>
+                        <input type="text" id="other_income_sources" name="other_income_sources" placeholder="Child support, bonuses, rental income, etc.">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Property or Rental Details</legend>
+                <p class="helper-text">Information about the property securing this HELOC.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="property_address">Property Address *</label>
+                        <input type="text" id="property_address" name="property_address" required>
+                        <span class="inline-error">Property address required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="property_type">Property Type *</label>
+                        <select id="property_type" name="property_type" required>
+                            <option value="">Select type</option>
+                            <option>Single-family</option>
+                            <option>Condo</option>
+                            <option>Townhome</option>
+                            <option>Multi-family (2-4 units)</option>
+                            <option>Manufactured home</option>
+                        </select>
+                        <span class="inline-error">Property type required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label"><span>This is my primary residence</span><input type="checkbox" name="primary_residence" value="Yes" required></label>
+                        <span class="inline-error">Primary residence confirmation required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="year_purchased">Year Purchased *</label>
+                        <input type="number" id="year_purchased" name="year_purchased" min="1900" max="2099" required>
+                        <span class="inline-error">Year purchased required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase_price">Purchase Price ($) *</label>
+                        <input type="number" id="purchase_price" name="purchase_price" min="0" required>
+                        <span class="inline-error">Purchase price required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="current_value">Estimated Current Value ($) *</label>
+                        <input type="number" id="current_value" name="current_value" min="0" required>
+                        <span class="inline-error">Current value required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="mortgage_balance">Outstanding Mortgage Balance ($) *</label>
+                        <input type="number" id="mortgage_balance" name="mortgage_balance" min="0" required>
+                        <span class="inline-error">Mortgage balance required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lender_name">Current Mortgage Lender *</label>
+                        <input type="text" id="lender_name" name="lender_name" required>
+                        <span class="inline-error">Lender name required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Financial Details</legend>
+                <p class="helper-text">Provide details used for qualification and disclosures.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="credit_score_range">Estimated Credit Score Range *</label>
+                        <select id="credit_score_range" name="credit_score_range" required>
+                            <option value="">Select range</option>
+                            <option>740+ (Excellent)</option>
+                            <option>700-739 (Good)</option>
+                            <option>640-699 (Fair)</option>
+                            <option>Below 640 (Developing)</option>
+                        </select>
+                        <span class="inline-error">Credit score range required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="monthly_mortgage_payment">Monthly Mortgage Payment ($) *</label>
+                        <input type="number" id="monthly_mortgage_payment" name="monthly_mortgage_payment" min="0" required>
+                        <span class="inline-error">Monthly mortgage payment required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="other_monthly_debts">Other Monthly Debts ($) *</label>
+                        <input type="number" id="other_monthly_debts" name="other_monthly_debts" min="0" required>
+                        <span class="inline-error">Other monthly debts required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label"><span>I have filed bankruptcy</span><input type="checkbox" name="bankruptcy_history" value="Yes"></label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label"><span>I have had a foreclosure</span><input type="checkbox" name="foreclosure_history" value="Yes"></label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">HELOC Request</legend>
+                <p class="helper-text">Define how you plan to use the line and preferred terms.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="requested_credit_line">Requested Credit Line Amount ($) *</label>
+                        <input type="number" id="requested_credit_line" name="requested_credit_line" min="0" required>
+                        <span class="inline-error">Requested credit line required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="use_of_funds">Intended Use of Funds *</label>
+                        <select id="use_of_funds" name="use_of_funds" required>
+                            <option value="">Select use</option>
+                            <option>Home improvement</option>
+                            <option>Debt consolidation</option>
+                            <option>Education</option>
+                            <option>Emergency funds</option>
+                            <option>Medical expenses</option>
+                            <option>Other</option>
+                        </select>
+                        <span class="inline-error">Use of funds required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_draw_period">Preferred Draw Period *</label>
+                        <select id="preferred_draw_period" name="preferred_draw_period" required>
+                            <option value="">Select period</option>
+                            <option>5 years</option>
+                            <option>7 years</option>
+                            <option>10 years</option>
+                        </select>
+                        <span class="inline-error">Draw period required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_repayment_term">Preferred Repayment Term *</label>
+                        <select id="preferred_repayment_term" name="preferred_repayment_term" required>
+                            <option value="">Select term</option>
+                            <option>10 years</option>
+                            <option>15 years</option>
+                            <option>20 years</option>
+                        </select>
+                        <span class="inline-error">Repayment term required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Upload Documents</legend>
+                <p class="helper-text">Attach clear copies. All uploads travel with your submission.</p>
+                <div class="upload-grid">
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Proof of Identity *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="proof_identity" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Proof of Income *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="proof_income" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Mortgage Statement *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="mortgage_statement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Homeowners Insurance *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="homeowners_insurance" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Property Tax Statement *</div>
+                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="property_tax_statement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file chosen</small>
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Authorization &amp; Attestation</legend>
+                <p class="helper-text">These consents are required to process your request.</p>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><span>I authorize a credit pull and verification of housing and employment.</span><input type="checkbox" name="credit_pull_auth" value="Yes" required></label>
+                        <span class="inline-error">Credit pull authorization required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><span>I certify that all statements and documents are accurate and complete.</span><input type="checkbox" name="certification" value="Yes" required></label>
+                        <span class="inline-error">Certification required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="checkbox-label"><span>I agree to program terms, disclosures, and use of electronic signatures.</span><input type="checkbox" name="terms_agreement" value="Yes" required></label>
+                        <span class="inline-error">Agreement required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend class="form-legend">Signature &amp; Submission</legend>
+                <p class="helper-text">Sign electronically to submit.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="digital_signature">Digital Signature (Type Full Name) *</label>
+                        <input type="text" id="digital_signature" name="digital_signature" required>
+                        <span class="inline-error">Digital signature required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="signature_date">Date *</label>
+                        <input type="date" id="signature_date" name="signature_date" required>
+                        <span class="inline-error">Date required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="sticky-submit">
+                <button type="submit" class="btn btn-submit" style="background: var(--accent);" disabled>Submit HELOC Application</button>
+                <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                    By submitting, you certify that all information provided is true and accurate.
+                </p>
             </div>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="full_name">Full Legal Name *</label>
-                    <input type="text" id="full_name" name="full_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="property_value">Estimated Home Value ($) *</label>
-                    <input type="number" id="property_value" name="property_value" required placeholder="e.g. 450000">
-                </div>
-                <div class="form-group">
-                    <label for="mortgage_balance">Current Mortgage Balance ($) *</label>
-                    <input type="number" id="mortgage_balance" name="mortgage_balance" required placeholder="e.g. 210000">
-                </div>
-
-                <div class="form-group">
-                    <label for="credit_score">Estimated Credit Score *</label>
-                    <select id="credit_score" name="credit_score" required>
-                        <option value="">Select Range</option>
-                        <option value="740+">740+ (Excellent)</option>
-                        <option value="700-739">700-739 (Good)</option>
-                        <option value="640-699">640-699 (Fair)</option>
-                        <option value="Below 640">Below 640</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="loan_amount">Requested Credit Line ($) *</label>
-                    <input type="number" id="loan_amount" name="loan_amount" required>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="purpose">Purpose of Credit Line *</label>
-                    <select id="purpose" name="purpose" required>
-                        <option value="">Select Purpose</option>
-                        <option value="Home Improvement">Home Improvement</option>
-                        <option value="Debt Consolidation">Debt Consolidation</option>
-                        <option value="Education">Education</option>
-                        <option value="Emergency Funds">Emergency Funds</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-submit" style="background: var(--accent);">Submit Pre-Qualification</button>
         </form>
     </main>
 
