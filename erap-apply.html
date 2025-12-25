@@ -60,28 +60,28 @@
                 <p class="helper-text">Have these items nearby to finish faster and avoid pauses.</p>
                 <div class="readiness-grid">
                     <div class="readiness-item">
-                        <span class="icon">📄</span>
+                        <span class="icon">ID</span>
                         <div>
                             <p class="title">Identity + SSN</p>
                             <p class="description">Match the name on your ID and enter the full 9-digit SSN.</p>
                         </div>
                     </div>
                     <div class="readiness-item">
-                        <span class="icon">🏠</span>
+                        <span class="icon">Lease</span>
                         <div>
                             <p class="title">Lease & arrears</p>
                             <p class="description">Current rent, months past due, and total arrears.</p>
                         </div>
                     </div>
                     <div class="readiness-item">
-                        <span class="icon">📞</span>
+                        <span class="icon">Contact</span>
                         <div>
                             <p class="title">Landlord details</p>
                             <p class="description">Full contact info and acceptance of direct payment.</p>
                         </div>
                     </div>
                     <div class="readiness-item">
-                        <span class="icon">🧾</span>
+                        <span class="icon">Docs</span>
                         <div>
                             <p class="title">Proofs to upload</p>
                             <p class="description">ID, income docs, lease, eviction or past-due notice, utilities.</p>
@@ -232,12 +232,12 @@
                     <div class="form-group full-width">
                         <label>Utility Assistance Requested *</label>
                         <div class="utility-options">
-                            <div class="checkbox-row"><input type="checkbox" id="utility_electric" name="utility_assistance[]" value="Electric"><label for="utility_electric">Electric</label></div>
-                            <div class="checkbox-row"><input type="checkbox" id="utility_gas" name="utility_assistance[]" value="Gas"><label for="utility_gas">Gas</label></div>
-                            <div class="checkbox-row"><input type="checkbox" id="utility_water" name="utility_assistance[]" value="Water"><label for="utility_water">Water</label></div>
-                            <div class="checkbox-row"><input type="checkbox" id="utility_sewer" name="utility_assistance[]" value="Sewer"><label for="utility_sewer">Sewer</label></div>
-                            <div class="checkbox-row"><input type="checkbox" id="utility_trash" name="utility_assistance[]" value="Trash"><label for="utility_trash">Trash</label></div>
-                            <div class="checkbox-row"><input type="checkbox" id="utility_other" name="utility_assistance[]" value="Other"><label for="utility_other">Other</label></div>
+                            <div class="checkbox-row"><label for="utility_electric">Electric</label><input type="checkbox" id="utility_electric" name="utility_assistance[]" value="Electric"></div>
+                            <div class="checkbox-row"><label for="utility_gas">Gas</label><input type="checkbox" id="utility_gas" name="utility_assistance[]" value="Gas"></div>
+                            <div class="checkbox-row"><label for="utility_water">Water</label><input type="checkbox" id="utility_water" name="utility_assistance[]" value="Water"></div>
+                            <div class="checkbox-row"><label for="utility_sewer">Sewer</label><input type="checkbox" id="utility_sewer" name="utility_assistance[]" value="Sewer"></div>
+                            <div class="checkbox-row"><label for="utility_trash">Trash</label><input type="checkbox" id="utility_trash" name="utility_assistance[]" value="Trash"></div>
+                            <div class="checkbox-row"><label for="utility_other">Other</label><input type="checkbox" id="utility_other" name="utility_assistance[]" value="Other"></div>
                         </div>
                         <span class="inline-error">Select at least one utility type.</span>
                     </div>
@@ -334,22 +334,22 @@
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="contact_authorization" name="contact_authorization" value="Yes" required>
                             <label for="contact_authorization">I authorize the program to contact my landlord/property manager for verification and payment routing.</label>
+                            <input type="checkbox" id="contact_authorization" name="contact_authorization" value="Yes" required>
                         </div>
                         <span class="inline-error">Authorization is required.</span>
                     </div>
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="accuracy_certification" name="accuracy_certification" value="Yes" required>
                             <label for="accuracy_certification">I certify under penalty of perjury that all information and uploads are true, complete, and correct.</label>
+                            <input type="checkbox" id="accuracy_certification" name="accuracy_certification" value="Yes" required>
                         </div>
                         <span class="inline-error">Certification is required.</span>
                     </div>
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="attestation" name="attestation" value="Yes" required>
                             <label for="attestation">I understand that misrepresentation may result in denial, repayment, or penalties.</label>
+                            <input type="checkbox" id="attestation" name="attestation" value="Yes" required>
                         </div>
                         <span class="inline-error">Attestation is required.</span>
                     </div>
