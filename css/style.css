@@ -332,7 +332,7 @@ nav {
     padding: 45px;
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    margin-top: -80px;
+    margin-top: 20px;
     margin-bottom: 60px;
     border: 1px solid #edf2f7;
 }
@@ -356,26 +356,37 @@ nav {
     margin-bottom: 12px;
 }
 
+.form-section,
+.form-section,
 fieldset {
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 20px;
     background: #fbfdff;
     box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+    margin-bottom: 24px;
 }
 
+.form-section + .form-section,
+.form-section + fieldset,
+fieldset + .form-section,
 fieldset + fieldset {
     margin-top: 24px;
 }
 
+.form-section legend,
 legend {
     padding: 0 8px;
 }
 
+.form-section .form-grid {
+    margin-top: 10px;
+}
+
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
 }
 
 .form-group {
@@ -395,11 +406,17 @@ label {
 }
 
 .checkbox-label {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    display: block;
     font-weight: 600;
     color: var(--text-dark);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.checkbox-label input[type="checkbox"],
+.checkbox-label input[type="radio"] {
+    margin-right: 10px;
+    transform: translateY(2px);
 }
 
 input, select, textarea {
@@ -425,8 +442,8 @@ input::placeholder {
 
 .utility-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
 }
 
 .helper-text {
@@ -439,8 +456,10 @@ input::placeholder {
 /* Uploads */
 .upload-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 10px;
+    clear: both;
 }
 
 .upload-card {
@@ -591,6 +610,16 @@ footer {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+    .form-card {
+        padding: 35px;
+    }
+}
+
 @media (max-width: 900px) {
     .hero-grid {
         grid-template-columns: 1fr;
@@ -605,4 +634,11 @@ footer {
     .btn-primary { width: 100%; }
     .form-card { padding: 25px; }
     .section-title { font-size: 2rem; }
+    .upload-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+    .form-card { padding: 20px; }
+    .form-grid { gap: 16px; }
+    .upload-card { padding: 14px; }
 }
