@@ -610,18 +610,14 @@ input::placeholder {
 
 .readiness-item {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 6px;
     align-items: start;
     background: #fff;
     border: 1px solid #e3ecff;
     border-radius: 12px;
-    padding: 12px;
+    padding: 14px;
     box-shadow: 0 8px 18px rgba(0,0,0,0.04);
-}
-
-.readiness-item .icon {
-    font-size: 1.3rem;
 }
 
 .readiness-item .title {
@@ -646,22 +642,42 @@ input::placeholder {
 
 .upload-card {
     display: block;
-    background: #f7fafc;
-    border: 2px dashed #cbd5e0;
+    background: linear-gradient(135deg, #f8fbff, #eef2ff);
+    border: 1px solid #d4dcf4;
     border-radius: 14px;
-    padding: 18px;
+    padding: 18px 18px 16px 18px;
     color: var(--text-dark);
     cursor: pointer;
     transition: var(--transition);
     position: relative;
     min-height: 150px;
     overflow: hidden;
+    box-shadow: 0 14px 30px rgba(16,42,67,0.08);
 }
 
 .upload-card:hover {
     border-color: var(--accent);
-    background: #edf2f7;
-    box-shadow: 0 10px 26px rgba(43,108,176,0.08);
+    background: linear-gradient(135deg, #edf2ff, #f7fafc);
+    box-shadow: 0 18px 34px rgba(43,108,176,0.12);
+}
+
+.upload-card .clear-file {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.upload-card .clear-file:hover {
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .upload-card .clear-file {
@@ -750,10 +766,16 @@ footer {
 }
 
 .upload-icon {
-    font-size: 24px;
+    font-size: 20px;
     color: var(--accent);
-    display: inline-block;
-    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(43,108,176,0.12);
+    margin-bottom: 10px;
 }
 
 .upload-instruction {

@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = form.querySelector('.btn-submit');
         const statusEl = form.querySelector('.form-status');
 
-        const runValidation = (e) => {
+        const runValidation = (showErrors = false) => {
             let isValid = true;
             const requiredInputs = form.querySelectorAll('[required]');
             requiredInputs.forEach(input => clearInvalid(input));
@@ -53,31 +53,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const value = (input.type === 'checkbox') ? (input.checked ? 'checked' : '') : input.value.trim();
                 
                 if (!value) {
-                    markInvalid(input);
                     isValid = false;
+                    if (showErrors) {
+                        markInvalid(input);
+                    }
                 }
 
                 if (input.type === 'email' && value) {
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
 
                 if (input.type === 'tel' && value) {
                     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                     if (!phoneRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
                 
                 if (input.id === 'ssn' && value) {
                     const ssnRegex = /^(\d{3}-\d{2}-\d{4})|(\d{9})$/;
                     if (!ssnRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
             });
@@ -87,8 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const boxes = group.querySelectorAll('input[type="checkbox"]');
                 const anyChecked = Array.from(boxes).some(box => box.checked);
                 if (!anyChecked) {
-                    boxes.forEach(box => markInvalid(box));
                     isValid = false;
+                    if (showErrors) {
+                        boxes.forEach(box => markInvalid(box));
+                    }
                 }
             });
 
@@ -106,11 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return isValid;
         };
 
-        form.addEventListener('input', () => runValidation());
-        form.addEventListener('change', () => runValidation());
+        form.addEventListener('input', () => runValidation(false));
+        form.addEventListener('change', () => runValidation(false));
 
         form.addEventListener('submit', (e) => {
-            const ok = runValidation();
+            const ok = runValidation(true);
             if (!ok) {
                 e.preventDefault();
                 alert('Please correct the highlighted fields before submitting.');
