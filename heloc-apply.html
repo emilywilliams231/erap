@@ -17,21 +17,69 @@
         </div>
     </nav>
 
-    <header class="hero" style="background: linear-gradient(135deg, #102a43 0%, #2c5282 100%); padding: 60px 0 100px 0;">
+    <header class="hero patterned alt" style="padding: 60px 0 110px 0;">
         <div class="container">
-            <h1>HELOC Application</h1>
-            <p>Access the value of your home with our detailed credit line intake. Provide full SSN and documents for a compliant review.</p>
+            <div class="hero-grid">
+                <div>
+                    <h1>HELOC Application</h1>
+                    <p>Access the value of your home with our detailed credit line intake. Provide full SSN and documents for a compliant review.</p>
+                    <div class="trust-badges">
+                        <span class="badge">Encrypted submission</span>
+                        <span class="badge">1–3 business day decisions</span>
+                        <span class="badge">Equal Housing Lender</span>
+                    </div>
+                </div>
+                <div class="hero-panel glass">
+                    <p class="panel-title">What you’ll need</p>
+                    <ul class="compact-list">
+                        <li>Government ID, full SSN, and employment details</li>
+                        <li>Property value, mortgage balance, and lender info</li>
+                        <li>Income proofs, mortgage statement, insurance, tax bill</li>
+                        <li>Credit pull consent and electronic signature</li>
+                    </ul>
+                    <div class="time-chip accent">Est. time: 7–9 minutes</div>
+                </div>
+            </div>
         </div>
     </header>
 
     <main class="container">
-        <div class="progress-indicator">
-            <span class="progress-dot"></span>
-            <span>Step 1 of 6: Complete your HELOC application</span>
+        <div class="progress-indicator stepper" aria-label="Form progress">
+            <button class="step active" type="button" data-target="#heloc-applicant">1. Applicant</button>
+            <button class="step" type="button" data-target="#heloc-household">2. Household</button>
+            <button class="step" type="button" data-target="#heloc-property">3. Property</button>
+            <button class="step" type="button" data-target="#heloc-financial">4. Financial</button>
+            <button class="step" type="button" data-target="#heloc-request">5. Request</button>
+            <button class="step" type="button" data-target="#heloc-uploads">6. Uploads</button>
+            <button class="step" type="button" data-target="#heloc-attestation">7. Attestation</button>
+            <button class="step" type="button" data-target="#heloc-signature">8. Signature</button>
         </div>
         <form action="includes/process-heloc.php" method="POST" class="form-card" id="heloc-form" enctype="multipart/form-data" novalidate>
             <input type="hidden" name="csrf_token" id="csrf_token_heloc" value="">
-            <fieldset class="form-section">
+            <div class="readiness-card">
+                <h2>Before you start</h2>
+                <p class="helper-text">Have these items nearby to finish faster and avoid pauses.</p>
+                <div class="readiness-grid">
+                    <div class="readiness-item">
+                        <p class="title">Identity + SSN</p>
+                        <p class="description">Use your legal name as it appears on your ID and provide the full SSN.</p>
+                    </div>
+                    <div class="readiness-item">
+                        <p class="title">Property details</p>
+                        <p class="description">Address, type, purchase year, value estimate, and mortgage balance.</p>
+                    </div>
+                    <div class="readiness-item">
+                        <p class="title">Debt & payment picture</p>
+                        <p class="description">Monthly mortgage, other debts, credit score range.</p>
+                    </div>
+                    <div class="readiness-item">
+                        <p class="title">Documents to upload</p>
+                        <p class="description">ID, income proof, mortgage statement, insurance, property tax statement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <fieldset class="form-section" id="heloc-applicant" data-step="1">
                 <legend class="form-legend">Applicant Information</legend>
                 <p class="helper-text">Confirm personal identifiers exactly as they appear on your ID.</p>
                 <div class="form-grid">
@@ -79,7 +127,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-household" data-step="2">
                 <legend class="form-legend">Household / Income</legend>
                 <p class="helper-text">Document current employment and recurring income.</p>
                 <div class="form-grid">
@@ -124,7 +172,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-property" data-step="3">
                 <legend class="form-legend">Property or Rental Details</legend>
                 <p class="helper-text">Information about the property securing this HELOC.</p>
                 <div class="form-grid">
@@ -146,7 +194,10 @@
                         <span class="inline-error">Property type required.</span>
                     </div>
                     <div class="form-group">
-                        <label class="checkbox-label"><span>This is my primary residence</span><input type="checkbox" name="primary_residence" value="Yes" required></label>
+                        <div class="checkbox-row">
+                            <label for="primary_residence">This is my primary residence</label>
+                            <input type="checkbox" id="primary_residence" name="primary_residence" value="Yes" required>
+                        </div>
                         <span class="inline-error">Primary residence confirmation required.</span>
                     </div>
                     <div class="form-group">
@@ -177,7 +228,7 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-financial" data-step="4">
                 <legend class="form-legend">Financial Details</legend>
                 <p class="helper-text">Provide details used for qualification and disclosures.</p>
                 <div class="form-grid">
@@ -203,15 +254,21 @@
                         <span class="inline-error">Other monthly debts required.</span>
                     </div>
                     <div class="form-group">
-                        <label class="checkbox-label"><span>I have filed bankruptcy</span><input type="checkbox" name="bankruptcy_history" value="Yes"></label>
+                        <div class="checkbox-row">
+                            <label for="bankruptcy_history">I have filed bankruptcy</label>
+                            <input type="checkbox" id="bankruptcy_history" name="bankruptcy_history" value="Yes">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="checkbox-label"><span>I have had a foreclosure</span><input type="checkbox" name="foreclosure_history" value="Yes"></label>
+                        <div class="checkbox-row">
+                            <label for="foreclosure_history">I have had a foreclosure</label>
+                            <input type="checkbox" id="foreclosure_history" name="foreclosure_history" value="Yes">
+                        </div>
                     </div>
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-request" data-step="5">
                 <legend class="form-legend">HELOC Request</legend>
                 <p class="helper-text">Define how you plan to use the line and preferred terms.</p>
                 <div class="form-grid">
@@ -256,82 +313,87 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-uploads" data-step="6">
                 <legend class="form-legend">Upload Documents</legend>
                 <p class="helper-text">Attach clear copies. All uploads travel with your submission.</p>
                 <div class="upload-grid">
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Proof of Identity *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">PDF, JPG, PNG • Max 25MB</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="proof_identity" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                        <small class="file-name">No file chosen</small>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Proof of Income *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Paystubs, award letters • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="proof_income" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                        <small class="file-name">No file chosen</small>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Mortgage Statement *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Latest statement • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="mortgage_statement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                        <small class="file-name">No file chosen</small>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Homeowners Insurance *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Declarations page • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="homeowners_insurance" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                        <small class="file-name">No file chosen</small>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
                         <div class="upload-instruction">Property Tax Statement *</div>
-                        <div class="upload-subtext">Click to upload or drag files here (PDF, JPG, PNG)</div>
+                        <div class="upload-subtext">Latest tax bill • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="property_tax_statement" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
-                        <small class="file-name">No file chosen</small>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
                     </label>
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-attestation" data-step="7">
                 <legend class="form-legend">Authorization &amp; Attestation</legend>
                 <p class="helper-text">These consents are required to process your request.</p>
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="credit_pull_auth" name="credit_pull_auth" value="Yes" required>
                             <label for="credit_pull_auth">I authorize a credit pull and verification of housing and employment.</label>
+                            <input type="checkbox" id="credit_pull_auth" name="credit_pull_auth" value="Yes" required>
                         </div>
                         <span class="inline-error">Credit pull authorization required.</span>
                     </div>
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="certification" name="certification" value="Yes" required>
                             <label for="certification">I certify that all statements and documents are accurate and complete.</label>
+                            <input type="checkbox" id="certification" name="certification" value="Yes" required>
                         </div>
                         <span class="inline-error">Certification required.</span>
                     </div>
                     <div class="form-group full-width">
                         <div class="checkbox-row">
-                            <input type="checkbox" id="terms_agreement" name="terms_agreement" value="Yes" required>
                             <label for="terms_agreement">I agree to program terms, disclosures, and use of electronic signatures.</label>
+                            <input type="checkbox" id="terms_agreement" name="terms_agreement" value="Yes" required>
                         </div>
                         <span class="inline-error">Agreement required.</span>
                     </div>
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
+            <fieldset class="form-section" id="heloc-signature" data-step="8">
                 <legend class="form-legend">Signature &amp; Submission</legend>
                 <p class="helper-text">Sign electronically to submit.</p>
                 <div class="form-grid">
@@ -349,6 +411,7 @@
             </fieldset>
 
             <div class="sticky-submit">
+                <div class="form-status" aria-live="polite">Checking required fields…</div>
                 <button type="submit" class="btn btn-submit" style="background: var(--accent);" disabled>Submit HELOC Application</button>
                 <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
                     By submitting, you certify that all information provided is true and accurate.
