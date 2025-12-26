@@ -261,7 +261,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 8. CSRF token fetch
+    // 8. Video upload preview (homepage)
+    const videoInput = document.querySelector('[data-video-input]');
+    const videoPreview = document.getElementById('impact-video-preview');
+    const videoFileName = document.querySelector('.video-upload .file-name');
+    if (videoInput && videoPreview) {
+        videoInput.addEventListener('change', (event) => {
+            const file = event.target.files && event.target.files[0];
+            videoPreview.innerHTML = '';
+            if (file) {
+                const url = URL.createObjectURL(file);
+                const vid = document.createElement('video');
+                vid.controls = true;
+                vid.src = url;
+                videoPreview.appendChild(vid);
+                if (videoFileName) videoFileName.textContent = file.name;
+            } else {
+                const placeholder = document.createElement('p');
+                placeholder.className = 'placeholder';
+                placeholder.textContent = 'Your video preview will appear here.';
+                videoPreview.appendChild(placeholder);
+                if (videoFileName) videoFileName.textContent = 'No video uploaded yet';
+            }
+        });
+    }
+
+    // 9. CSRF token fetch
     fetch('includes/csrf-token.php')
         .then(res => res.json())
         .then(data => {
