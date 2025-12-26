@@ -498,6 +498,17 @@ nav {
     border-color: var(--white);
 }
 
+.btn-ghost {
+    background: transparent;
+    border: 1px solid #cbd5e0;
+    color: var(--primary);
+}
+
+.btn-ghost:hover {
+    background: #edf2f7;
+    border-color: #a0aec0;
+}
+
 .btn-submit {
     background: var(--primary);
     color: var(--white);
@@ -963,6 +974,90 @@ footer {
     margin-top: 24px;
     box-shadow: none;
     border: none;
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    z-index: 80;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 26px;
+    max-width: 480px;
+    width: 92%;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.16);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: var(--transition);
+    pointer-events: auto;
+}
+
+.modal.open .modal-card {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal.open {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.modal-body-text {
+    margin-top: 6px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.modal-actions .btn {
+    width: auto;
+    margin-top: 0;
+}
+
+.modal-footnote {
+    margin-top: 12px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
 }
 
 .btn-submit:disabled {
