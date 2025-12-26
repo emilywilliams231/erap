@@ -181,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         if ($mail->send()) {
-            header("Location: ../success.html");
+            header("Location: ../erap-urs-prompt.html");
             exit();
         }
 
