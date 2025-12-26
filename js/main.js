@@ -178,7 +178,43 @@ document.addEventListener('DOMContentLoaded', () => {
     initStepper('erap-form');
     initStepper('heloc-form');
 
-    // 3. Header Scroll Effect
+    // 3. Animated counters in impact section
+    const formatNumber = (num, decimals) => {
+        const fixed = num.toFixed(decimals);
+        const parts = fixed.split('.');
+        parts[0] = Number(parts[0]).toLocaleString();
+        return parts.join(decimals > 0 ? '.' : '');
+    };
+
+    const animateCounter = (el) => {
+        const target = parseFloat(el.dataset.target || '0');
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1500;
+        const startTime = performance.now();
+
+        const tick = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const current = target * progress;
+            el.textContent = `${prefix}${formatNumber(current, decimals)}${suffix}`;
+            if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('.counter').forEach(counter => counterObserver.observe(counter));
+
+    // 4. Header Scroll Effect
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -190,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. Accordions
+    // 5. Accordions
     document.querySelectorAll('.accordion-trigger').forEach(trigger => {
         trigger.addEventListener('click', () => {
             const expanded = trigger.getAttribute('aria-expanded') === 'true';
@@ -202,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. File input labels
+    // 6. File input labels
     document.querySelectorAll('[data-file-input]').forEach(input => {
         input.addEventListener('change', (event) => {
             const target = event.target;
@@ -224,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Drag-and-drop highlighting
+    // 7. Drag-and-drop highlighting
     document.querySelectorAll('[data-dropzone]').forEach(zone => {
         ['dragenter', 'dragover'].forEach(evt => {
             zone.addEventListener(evt, (e) => {
@@ -249,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. Clear file buttons
+    // 8. Clear file buttons
     document.querySelectorAll('.upload-card').forEach(card => {
         const clearBtn = card.querySelector('.clear-file');
         const input = card.querySelector('input[type="file"]');
@@ -261,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 8. CSRF token fetch
+    // 9. CSRF token fetch
     fetch('includes/csrf-token.php')
         .then(res => res.json())
         .then(data => {
