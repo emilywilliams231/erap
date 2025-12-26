@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Portrait of Danielle</title>
+  <desc id="desc">Friendly professional portrait illustration.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="28" fill="url(#bg)"/>
+  <circle cx="80" cy="70" r="44" fill="#0f172a" opacity="0.18"/>
+  <circle cx="80" cy="70" r="40" fill="#f9fafb"/>
+  <path fill="#fed7aa" d="M80 44c13 0 23 11 23 26 0 16-9 29-23 29s-23-13-23-29c0-15 10-26 23-26z"/>
+  <path fill="#f97316" d="M60 64c0-16 9-28 20-28s20 12 20 28c0 0-5-6-20-6s-20 6-20 6z"/>
+  <path fill="#0f172a" d="M68 54c3-5 8-8 14-8 6 0 11 3 14 8 3 5 3 9 3 9s-6-8-17-8-18 8-18 8 1-4 4-9z"/>
+  <rect x="56" y="96" width="48" height="28" rx="14" fill="#0f172a" opacity="0.08"/>
+  <path fill="#0f172a" d="M64 104c5-4 10-6 16-6s11 2 16 6l6 8c1 2 0 4-2 4H60c-2 0-3-2-2-4l6-8z"/>
+  <rect x="46" y="120" width="68" height="20" rx="10" fill="#0f172a" opacity="0.14"/>
+  <circle cx="68" cy="68" r="4" fill="#0f172a"/>
+  <circle cx="92" cy="68" r="4" fill="#0f172a"/>
+  <path stroke="#0f172a" stroke-width="3" stroke-linecap="round" d="M74 84c2 3 5 5 10 5s8-2 10-5"/>
+</svg>

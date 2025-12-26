@@ -166,6 +166,27 @@ body {
 .avatar.a2 { background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 120\"><defs><linearGradient id=\"g2\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop stop-color=\"%23f8b4b4\" offset=\"0%\"/><stop stop-color=\"%23c53030\" offset=\"100%\"/></linearGradient></defs><rect width=\"120\" height=\"120\" rx=\"24\" fill=\"url(%23g2)\"/><circle cx=\"60\" cy=\"46\" r=\"20\" fill=\"white\" opacity=\"0.92\"/><rect x=\"28\" y=\"68\" width=\"64\" height=\"34\" rx=\"17\" fill=\"white\" opacity=\"0.92\"/></svg>'); }
 .avatar.a3 { background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 120 120\"><defs><linearGradient id=\"g3\" x1=\"0%\" y1=\"0%\" x2=\"100%\" y2=\"100%\"><stop stop-color=\"%23c3f0ca\" offset=\"0%\"/><stop stop-color=\"%2338a169\" offset=\"100%\"/></linearGradient></defs><rect width=\"120\" height=\"120\" rx=\"24\" fill=\"url(%23g3)\"/><circle cx=\"60\" cy=\"46\" r=\"20\" fill=\"white\" opacity=\"0.9\"/><rect x=\"30\" y=\"68\" width=\"60\" height=\"34\" rx=\"17\" fill=\"white\" opacity=\"0.9\"/></svg>'); }
 
+.testimonial-figure {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.testimonial-portrait {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,0.3);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    background: #0b162c;
+}
+
+.testimonial-figure .avatar-group {
+    margin: 0;
+}
+
 .impact-visual {
     display: grid;
     place-items: center;
