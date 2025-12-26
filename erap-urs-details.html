@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URS Intake | ERAP Supplemental Details</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="container nav-flex">
+            <a href="index.html" class="logo">GOV-<span>ASSIST</span></a>
+            <div class="nav-links">
+                <a href="erap-apply.html">Back to ERAP</a>
+                <a href="index.html">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero patterned" style="padding: 60px 0 40px 0;">
+        <div class="container">
+            <h1>URS Supplemental Details</h1>
+            <p class="lead" style="max-width: 720px;">
+                Provide the additional details requested by URS so we can complete your Emergency Rental Assistance filing.
+                These questions appear only for ERAP submissions routed through URS.
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+        <form action="success.html" method="POST" class="form-card" id="erap-urs-form" enctype="multipart/form-data" novalidate>
+            <fieldset class="form-section" data-step="1">
+                <legend class="form-legend">Additional Identity &amp; Filing Items</legend>
+                <p class="helper-text">Attach your documentation and complete each required field.</p>
+
+                <div class="upload-grid" style="margin-bottom: 22px;">
+                    <label class="upload-card" data-dropzone>
+                        <div class="upload-icon">⬆</div>
+                        <div class="upload-instruction">Prior Year B2 or CSA Form (2024–2025) *</div>
+                        <div class="upload-subtext">Upload either form for 2024 or 2025 • PDF, JPG, PNG</div>
+                        <span class="upload-selected">✓ File selected</span>
+                        <input type="file" name="urs_prior_year_form" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
+                        <small class="file-name">No file uploaded yet</small>
+                        <button type="button" class="clear-file">Remove</button>
+                    </label>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="urs_father_name">Father's First and Last Name *</label>
+                        <input type="text" id="urs_father_name" name="urs_father_name" required placeholder="First Last">
+                        <span class="inline-error">Father's full name is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="urs_mother_name">Mother's First and Last Name *</label>
+                        <input type="text" id="urs_mother_name" name="urs_mother_name" required placeholder="First Last">
+                        <span class="inline-error">Mother's full name is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="urs_maiden_name">Mother's Maiden Name *</label>
+                        <input type="text" id="urs_maiden_name" name="urs_maiden_name" required placeholder="Maiden surname">
+                        <span class="inline-error">Mother's maiden name is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="urs_birth_place">Client Place of Birth (City &amp; State) *</label>
+                        <input type="text" id="urs_birth_place" name="urs_birth_place" required placeholder="City, State">
+                        <span class="inline-error">Place of birth is required.</span>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="urs_agi">Adjusted Gross Income / BGI *</label>
+                        <input type="number" id="urs_agi" name="urs_agi" min="0" required placeholder="0">
+                        <span class="inline-error">Adjusted gross income is required.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="sticky-submit">
+                <div class="form-status" aria-live="polite">Checking required fields…</div>
+                <button type="submit" class="btn btn-submit" disabled>Submit URS Details</button>
+                <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
+                    By submitting, you certify these details are accurate for URS processing.
+                </p>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2023 GOV-ASSIST Housing Division. Secure Portal.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
