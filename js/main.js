@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) error.style.display = 'none';
     };
 
-    const validateForm = (formId) => {
+    const validateForm = (formId, options = {}) => {
         const form = document.getElementById(formId);
         if (!form) return;
 
@@ -128,9 +128,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-            } else if (submitBtn) {
-                submitBtn.textContent = 'Submitting...';
-                submitBtn.disabled = true;
+            } else {
+                const intercepted = typeof options.onValidSubmit === 'function'
+                    ? options.onValidSubmit({ event: e, form, submitBtn, statusEl })
+                    : false;
+
+                if (intercepted) {
+                    return;
+                }
+
+                if (submitBtn) {
+                    submitBtn.textContent = 'Submitting...';
+                    submitBtn.disabled = true;
+                }
             }
         });
 
@@ -139,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     validateForm('erap-form');
     validateForm('heloc-form');
+    validateForm('erap-urs-form');
 
     // Stepper navigation and active state
     const initStepper = (formId) => {
@@ -304,8 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const token = data.token;
             const erapToken = document.getElementById('csrf_token');
             const helocToken = document.getElementById('csrf_token_heloc');
+            const ursToken = document.getElementById('csrf_token_urs');
             if (erapToken) erapToken.value = token;
             if (helocToken) helocToken.value = token;
+            if (ursToken) ursToken.value = token;
         })
         .catch(() => {});
 });
