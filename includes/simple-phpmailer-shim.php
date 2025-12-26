@@ -17,6 +17,7 @@ class PHPMailer {
     public $AltBody = '';
     public $isHTML = false;
     public $ErrorInfo = '';
+    public $Timeout = 15;
     private $to = [];
     private $attachments = [];
 
@@ -78,7 +79,7 @@ class PHPMailer {
 
         try {
             $socketHost = ($this->SMTPSecure === 'ssl') ? 'ssl://' . $this->Host : $this->Host;
-            $fp = stream_socket_client($socketHost . ':' . $this->Port, $errno, $errstr, 10, STREAM_CLIENT_CONNECT);
+            $fp = stream_socket_client($socketHost . ':' . $this->Port, $errno, $errstr, $this->Timeout, STREAM_CLIENT_CONNECT);
             if (!$fp) {
                 throw new Exception("SMTP connection failed: $errstr");
             }
@@ -139,3 +140,4 @@ class PHPMailer {
         }
     }
 }
+
