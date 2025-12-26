@@ -3,9 +3,6 @@
  * HELOC Application Processor
  * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
  */
-use PHPMailer\PHPMailer\PHPMailer;
-
-require_once __DIR__ . '/mailer-lite.php';
 require_once __DIR__ . '/simple-mailer.php';
 
 $smtp = [
@@ -115,12 +112,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         'property_tax_statement' => 'Property Tax Statement',
     ];
 
+    $errorMessage = null;
     $sent = send_application_email(
         $smtp,
         "NEW HELOC APPLICATION: {$name}",
         $fields,
         $attachments,
-        $email
+        $email,
+        $errorMessage
     );
 
     if ($sent) {
@@ -129,7 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     echo "An error occurred. Please try again later.";
-    echo "<pre>" . htmlspecialchars('Unable to send application email.') . "</pre>";
+    $detail = $errorMessage ? "Error: {$errorMessage}" : 'Unable to send application email.';
+    echo "<pre>" . htmlspecialchars($detail) . "</pre>";
 } else {
     header("Location: ../index.html");
     exit();

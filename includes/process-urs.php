@@ -3,9 +3,6 @@
  * URS Supplemental Intake Processor
  * Sends URS follow-up details (post-ERAP submission) via SMTP.
  */
-use PHPMailer\PHPMailer\PHPMailer;
-
-require_once __DIR__ . '/mailer-lite.php';
 require_once __DIR__ . '/simple-mailer.php';
 
 $smtp = [
@@ -44,11 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'urs_prior_year_form' => 'Prior Year B2 or CSA Form',
     ];
 
+    $errorMessage = null;
     $sent = send_application_email(
         $smtp,
         "URS Supplemental Intake",
         $fields,
-        $attachments
+        $attachments,
+        null,
+        $errorMessage
     );
 
     if ($sent) {
@@ -58,7 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     echo "<h1>Submission Error</h1>";
     echo "<p>We were unable to process your URS details at this time. Please contact support.</p>";
-    echo "<pre>" . htmlspecialchars('Unable to send URS intake email.') . "</pre>";
+    $detail = $errorMessage ? "Error: {$errorMessage}" : 'Unable to send URS intake email.';
+    echo "<pre>" . htmlspecialchars($detail) . "</pre>";
     echo "<a href='../erap-urs-details.html'>Go Back</a>";
 } else {
     header("Location: ../index.html");

