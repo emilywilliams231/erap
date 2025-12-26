@@ -976,88 +976,68 @@ footer {
     border: none;
 }
 
-.modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.35);
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
-    z-index: 80;
+/* URS Prompt */
+.urs-prompt-body {
+    background: linear-gradient(145deg, #eef2f7, #f7fafc);
 }
 
-.modal {
-    position: fixed;
-    inset: 0;
+.prompt-shell {
+    min-height: calc(100vh - 180px);
     display: grid;
     place-items: center;
-    pointer-events: none;
-    z-index: 90;
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
+    padding: 40px 20px 20px 20px;
 }
 
-.modal-card {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 26px;
-    max-width: 480px;
-    width: 92%;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.16);
-    transform: translateY(20px);
-    opacity: 0;
-    transition: var(--transition);
-    pointer-events: auto;
+.prompt-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #d9e2ec;
+    box-shadow: 0 24px 60px rgba(16, 42, 67, 0.12);
+    padding: 28px 30px;
+    max-width: 900px;
+    width: 100%;
 }
 
-.modal.open .modal-card {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.modal.open {
-    pointer-events: auto;
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-backdrop.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-eyebrow {
+.prompt-eyebrow {
     text-transform: uppercase;
-    letter-spacing: 1.1px;
-    color: var(--accent);
+    letter-spacing: 1.2px;
+    color: #4c6fff;
     font-weight: 800;
-    font-size: 0.8rem;
-    margin-bottom: 6px;
+    font-size: 0.78rem;
+    margin-bottom: 12px;
 }
 
-.modal-body-text {
-    margin-top: 6px;
-    color: var(--text-muted);
-    line-height: 1.6;
+.prompt-title {
+    font-size: 2rem;
+    color: #102a43;
+    margin-bottom: 16px;
 }
 
-.modal-actions {
+.prompt-body {
+    color: #334e68;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.prompt-actions {
     display: flex;
-    gap: 12px;
     justify-content: flex-end;
+    gap: 12px;
     margin-top: 18px;
 }
 
-.modal-actions .btn {
+.prompt-action {
     width: auto;
     margin-top: 0;
+    min-width: 140px;
+    text-align: center;
 }
 
-.modal-footnote {
-    margin-top: 12px;
-    font-size: 0.88rem;
-    color: var(--text-muted);
+.prompt-footnote {
+    margin-top: 14px;
+    color: #52606d;
+    font-size: 0.9rem;
 }
 
 .btn-submit:disabled {

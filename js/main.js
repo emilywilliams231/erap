@@ -179,24 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     validateForm('heloc-form');
     validateForm('erap-urs-form');
 
-    if (erapProceed) {
-        erapProceed.addEventListener('click', () => {
-            toggleErapModal(false);
-            window.location.href = 'erap-urs-details.html';
-        });
-    }
-
-    if (erapSkip) {
-        erapSkip.addEventListener('click', () => {
-            toggleErapModal(false);
-            window.location.href = 'success.html';
-        });
-    }
-
-    if (erapModalBackdrop) {
-        erapModalBackdrop.addEventListener('click', () => toggleErapModal(false));
-    }
-
     // Stepper navigation and active state
     const initStepper = (formId) => {
         const form = document.getElementById(formId);
@@ -361,8 +343,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const token = data.token;
             const erapToken = document.getElementById('csrf_token');
             const helocToken = document.getElementById('csrf_token_heloc');
+            const ursToken = document.getElementById('csrf_token_urs');
             if (erapToken) erapToken.value = token;
             if (helocToken) helocToken.value = token;
+            if (ursToken) ursToken.value = token;
         })
         .catch(() => {});
 });
