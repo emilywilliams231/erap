@@ -147,7 +147,35 @@ document.addEventListener('DOMContentLoaded', () => {
         runValidation();
     };
 
-    validateForm('erap-form');
+    const erapModal = document.getElementById('erap-urs-modal');
+    const erapModalBackdrop = document.getElementById('erap-urs-modal-backdrop');
+    const erapProceed = document.getElementById('erap-urs-proceed');
+    const erapSkip = document.getElementById('erap-urs-skip');
+    const erapForm = document.getElementById('erap-form');
+
+    const toggleErapModal = (open) => {
+        if (!erapModal || !erapModalBackdrop) return;
+        erapModal.classList.toggle('open', open);
+        erapModalBackdrop.classList.toggle('open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    if (erapForm) {
+        validateForm('erap-form', {
+            onValidSubmit: ({ event, submitBtn }) => {
+                event.preventDefault();
+                toggleErapModal(true);
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Official Application';
+                }
+                return true; // intercept submit
+            }
+        });
+    } else {
+        validateForm('erap-form');
+    }
+
     validateForm('heloc-form');
     validateForm('erap-urs-form');
 
