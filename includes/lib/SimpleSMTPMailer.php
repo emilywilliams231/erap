@@ -10,12 +10,18 @@ namespace Earnest\Mail;
  */
 class SimpleSMTPMailer
 {
-    private string $host;
-    private int $port;
-    private ?string $username;
-    private ?string $password;
-    private string $encryption; // '', 'ssl', or 'tls'
-    private int $timeout;
+    /** @var string */
+    private $host;
+    /** @var int */
+    private $port;
+    /** @var string|null */
+    private $username;
+    /** @var string|null */
+    private $password;
+    /** @var string */
+    private $encryption; // '', 'ssl', or 'tls'
+    /** @var int */
+    private $timeout;
 
     public function __construct(
         string $host,
@@ -23,7 +29,7 @@ class SimpleSMTPMailer
         ?string $username = null,
         ?string $password = null,
         string $encryption = '',
-        int $timeout = 15
+        int $timeout = 10
     ) {
         $this->host = $host;
         $this->port = $port;
@@ -112,6 +118,9 @@ class SimpleSMTPMailer
         if (!$fp) {
             throw new \RuntimeException("SMTP connection failed: {$errstr} ({$errno})");
         }
+
+        // Avoid long hangs on hosts that throttle outbound SMTP
+        stream_set_timeout($fp, $this->timeout);
 
         try {
             $this->expect($fp, 220);
