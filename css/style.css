@@ -146,48 +146,6 @@ body {
     font-weight: 800;
 }
 
-.video-upload {
-    background: #fff;
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    border: 1px solid #e2e8f0;
-}
-
-.video-upload h3 {
-    margin-top: 6px;
-    margin-bottom: 8px;
-    color: var(--primary);
-}
-
-.video-drop {
-    cursor: pointer;
-}
-
-.video-preview {
-    margin-top: 12px;
-    background: #0f172a;
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid #1e293b;
-    min-height: 120px;
-    display: grid;
-    place-items: center;
-    color: #cbd5e0;
-}
-
-.video-preview video {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    display: block;
-}
-
-.video-preview .placeholder {
-    margin: 0;
-    color: #cbd5e0;
-}
-
 /* Navigation */
 nav {
     background: var(--white);
