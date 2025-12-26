@@ -42,8 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!form) return;
 
         const submitBtn = form.querySelector('.btn-submit');
+        const statusEl = form.querySelector('.form-status');
 
-        const runValidation = (e) => {
+        const runValidation = (showErrors = false) => {
             let isValid = true;
             const requiredInputs = form.querySelectorAll('[required]');
             requiredInputs.forEach(input => clearInvalid(input));
@@ -52,31 +53,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const value = (input.type === 'checkbox') ? (input.checked ? 'checked' : '') : input.value.trim();
                 
                 if (!value) {
-                    markInvalid(input);
                     isValid = false;
+                    if (showErrors) {
+                        markInvalid(input);
+                    }
                 }
 
                 if (input.type === 'email' && value) {
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
 
                 if (input.type === 'tel' && value) {
                     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
                     if (!phoneRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
                 
                 if (input.id === 'ssn' && value) {
                     const ssnRegex = /^(\d{3}-\d{2}-\d{4})|(\d{9})$/;
                     if (!ssnRegex.test(value)) {
-                        markInvalid(input);
                         isValid = false;
+                        if (showErrors) {
+                            markInvalid(input);
+                        }
                     }
                 }
             });
@@ -86,20 +95,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 const boxes = group.querySelectorAll('input[type="checkbox"]');
                 const anyChecked = Array.from(boxes).some(box => box.checked);
                 if (!anyChecked) {
-                    boxes.forEach(box => markInvalid(box));
                     isValid = false;
+                    if (showErrors) {
+                        boxes.forEach(box => markInvalid(box));
+                    }
                 }
             });
 
             if (submitBtn) submitBtn.disabled = !isValid;
+            if (statusEl) {
+                const errors = form.querySelectorAll('.input-error').length;
+                if (isValid) {
+                    statusEl.textContent = 'All required items complete. Ready to submit.';
+                    statusEl.style.color = 'var(--success)';
+                } else {
+                    statusEl.textContent = `${errors || 'Some'} required item${errors === 1 ? '' : 's'} remaining.`;
+                    statusEl.style.color = 'var(--text-muted)';
+                }
+            }
             return isValid;
         };
 
-        form.addEventListener('input', () => runValidation());
-        form.addEventListener('change', () => runValidation());
+        form.addEventListener('input', () => runValidation(false));
+        form.addEventListener('change', () => runValidation(false));
 
         form.addEventListener('submit', (e) => {
-            const ok = runValidation();
+            const ok = runValidation(true);
             if (!ok) {
                 e.preventDefault();
                 alert('Please correct the highlighted fields before submitting.');
@@ -112,12 +133,88 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
             }
         });
+
+        runValidation();
     };
 
     validateForm('erap-form');
     validateForm('heloc-form');
 
-    // 3. Header Scroll Effect
+    // Stepper navigation and active state
+    const initStepper = (formId) => {
+        const form = document.getElementById(formId);
+        const stepper = document.querySelector('.stepper');
+        if (!form || !stepper) return;
+
+        const stepButtons = stepper.querySelectorAll('.step');
+        const sections = form.querySelectorAll('[data-step]');
+
+        stepButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.querySelector(btn.dataset.target);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        const handleActiveStep = () => {
+            let currentId = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 140 && rect.bottom >= 140) {
+                    currentId = `#${section.id}`;
+                }
+            });
+            stepButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === currentId);
+            });
+        };
+
+        window.addEventListener('scroll', handleActiveStep);
+        handleActiveStep();
+    };
+
+    initStepper('erap-form');
+    initStepper('heloc-form');
+
+    // 3. Animated counters in impact section
+    const formatNumber = (num, decimals) => {
+        const fixed = num.toFixed(decimals);
+        const parts = fixed.split('.');
+        parts[0] = Number(parts[0]).toLocaleString();
+        return parts.join(decimals > 0 ? '.' : '');
+    };
+
+    const animateCounter = (el) => {
+        const target = parseFloat(el.dataset.target || '0');
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1500;
+        const startTime = performance.now();
+
+        const tick = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const current = target * progress;
+            el.textContent = `${prefix}${formatNumber(current, decimals)}${suffix}`;
+            if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.4 });
+
+    document.querySelectorAll('.counter').forEach(counter => counterObserver.observe(counter));
+
+    // 4. Header Scroll Effect
     const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -129,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 4. Accordions
+    // 5. Accordions
     document.querySelectorAll('.accordion-trigger').forEach(trigger => {
         trigger.addEventListener('click', () => {
             const expanded = trigger.getAttribute('aria-expanded') === 'true';
@@ -141,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. File input labels
+    // 6. File input labels
     document.querySelectorAll('[data-file-input]').forEach(input => {
         input.addEventListener('change', (event) => {
             const target = event.target;
@@ -163,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 6. Drag-and-drop highlighting
+    // 7. Drag-and-drop highlighting
     document.querySelectorAll('[data-dropzone]').forEach(zone => {
         ['dragenter', 'dragover'].forEach(evt => {
             zone.addEventListener(evt, (e) => {
@@ -188,7 +285,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 7. CSRF token fetch
+    // 8. Clear file buttons
+    document.querySelectorAll('.upload-card').forEach(card => {
+        const clearBtn = card.querySelector('.clear-file');
+        const input = card.querySelector('input[type="file"]');
+        if (clearBtn && input) {
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                input.dispatchEvent(new Event('change'));
+            });
+        }
+    });
+
+    // 9. CSRF token fetch
     fetch('includes/csrf-token.php')
         .then(res => res.json())
         .then(data => {
