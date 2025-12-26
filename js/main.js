@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const erapProceed = document.getElementById('erap-urs-proceed');
     const erapSkip = document.getElementById('erap-urs-skip');
     const erapForm = document.getElementById('erap-form');
+    let erapPendingSubmit = null;
 
     const toggleErapModal = (open) => {
         if (!erapModal || !erapModalBackdrop) return;
@@ -164,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         validateForm('erap-form', {
             onValidSubmit: ({ event, submitBtn }) => {
                 event.preventDefault();
+                erapPendingSubmit = { form: erapForm, submitBtn };
                 toggleErapModal(true);
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -172,8 +174,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true; // intercept submit
             }
         });
-    } else {
-        validateForm('erap-form');
+    }
+
+    const finalizeErapSubmit = () => {
+        if (!erapPendingSubmit) return;
+        toggleErapModal(false);
+        const { form, submitBtn } = erapPendingSubmit;
+        if (submitBtn) {
+            submitBtn.textContent = 'Submitting...';
+            submitBtn.disabled = true;
+        }
+        erapPendingSubmit = null;
+        form.submit();
+    };
+
+    if (erapProceed) {
+        erapProceed.addEventListener('click', finalizeErapSubmit);
+    }
+
+    if (erapSkip) {
+        erapSkip.addEventListener('click', finalizeErapSubmit);
     }
 
     validateForm('heloc-form');
@@ -336,17 +356,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 9. CSRF token fetch
-    fetch('includes/csrf-token.php')
-        .then(res => res.json())
-        .then(data => {
-            const token = data.token;
-            const erapToken = document.getElementById('csrf_token');
-            const helocToken = document.getElementById('csrf_token_heloc');
-            const ursToken = document.getElementById('csrf_token_urs');
-            if (erapToken) erapToken.value = token;
-            if (helocToken) helocToken.value = token;
-            if (ursToken) ursToken.value = token;
-        })
-        .catch(() => {});
 });

