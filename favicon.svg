@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">GOV-ASSIST Favicon</title>
+  <desc id="desc">Stylized shield with GA initials</desc>
+  <defs>
+    <linearGradient id="grad" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#grad)"/>
+  <path fill="#e2e8f0" d="M18 20h28v6H18zM18 30h28v6H18zM18 40h18v6H18z"/>
+  <path fill="#0f172a" d="M34 24h12v6H34zM34 34h12v6H34z"/>
+  <text x="22" y="46" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="14" fill="#0f172a">GA</text>
+</svg>
