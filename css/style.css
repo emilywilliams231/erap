@@ -799,7 +799,7 @@ label {
 
 .checkbox-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     margin-bottom: 16px;
     line-height: 1.5;
@@ -810,7 +810,6 @@ label {
 .checkbox-row input[type="radio"] {
     margin: 0;
     flex-shrink: 0;
-    margin-left: 8px;
 }
 
 .checkbox-row label {
