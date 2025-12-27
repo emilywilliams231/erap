@@ -10,18 +10,12 @@ namespace Earnest\Mail;
  */
 class SimpleSMTPMailer
 {
-    /** @var string */
-    private $host;
-    /** @var int */
-    private $port;
-    /** @var string|null */
-    private $username;
-    /** @var string|null */
-    private $password;
-    /** @var string */
-    private $encryption; // '', 'ssl', or 'tls'
-    /** @var int */
-    private $timeout;
+    private string $host;
+    private int $port;
+    private ?string $username;
+    private ?string $password;
+    private string $encryption; // '', 'ssl', or 'tls'
+    private int $timeout;
 
     public function __construct(
         string $host,
@@ -29,7 +23,7 @@ class SimpleSMTPMailer
         ?string $username = null,
         ?string $password = null,
         string $encryption = '',
-        int $timeout = 10
+        int $timeout = 15
     ) {
         $this->host = $host;
         $this->port = $port;
@@ -119,9 +113,6 @@ class SimpleSMTPMailer
             throw new \RuntimeException("SMTP connection failed: {$errstr} ({$errno})");
         }
 
-        // Avoid long hangs on hosts that throttle outbound SMTP
-        stream_set_timeout($fp, $this->timeout);
-
         try {
             $this->expect($fp, 220);
             $this->command($fp, 'EHLO localhost', 250);
@@ -154,57 +145,21 @@ class SimpleSMTPMailer
         }
     }
 
-    /**
-     * Send a command and drain multi-line responses until the final line.
-     */
     private function command($fp, string $cmd, int $expect): void
     {
         fwrite($fp, $cmd . "\r\n");
-        $resp = $this->readResponse($fp, $expect);
-        if ($resp === null) {
-            throw new \RuntimeException('SMTP error: empty response');
+        $resp = fgets($fp, 512);
+        if ($resp === false || strpos($resp, (string) $expect) !== 0) {
+            throw new \RuntimeException("SMTP error: " . trim((string) $resp));
         }
     }
 
-    /**
-     * Expect an initial server banner or response code (handles multi-line).
-     */
     private function expect($fp, int $code): void
     {
-        $resp = $this->readResponse($fp, $code);
-        if ($resp === null) {
-            throw new \RuntimeException('SMTP error: empty response');
+        $resp = fgets($fp, 512);
+        if ($resp === false || strpos($resp, (string) $code) !== 0) {
+            throw new \RuntimeException("SMTP error: " . trim((string) $resp));
         }
-    }
-
-    /**
-     * Read an SMTP response, consuming all continuation lines.
-     *
-     * @return string|null Final response line or null on failure.
-     */
-    private function readResponse($fp, int $expect): ?string
-    {
-        $lastLine = null;
-        $expectStr = (string) $expect;
-
-        while (($line = fgets($fp, 512)) !== false) {
-            $lastLine = $line;
-            $code = substr($line, 0, 3);
-            $isError = isset($code[0]) && ($code[0] === '4' || $code[0] === '5');
-            if ($isError) {
-                throw new \RuntimeException('SMTP error: ' . trim($line));
-            }
-            // Continuation lines use a hyphen after the code (e.g., 250-).
-            if (substr($line, 3, 1) !== '-') {
-                // If the final line code differs from what we expected but is still 2xx/3xx, accept it.
-                if ($code !== $expectStr && isset($code[0]) && ($code[0] === '2' || $code[0] === '3')) {
-                    return $line;
-                }
-                break;
-            }
-        }
-
-        return $lastLine;
     }
 
     private function sanitizeHeader(string $value): string
