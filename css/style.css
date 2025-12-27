@@ -803,7 +803,7 @@ label {
     gap: 12px;
     margin-bottom: 16px;
     line-height: 1.5;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .checkbox-row input[type="checkbox"],
