@@ -115,7 +115,7 @@ try {
 } catch (\Throwable $exception) {
     error_log('[URS] Mail send failed: ' . $exception->getMessage());
     echo "<h1>Submission Error</h1>";
-    echo "<p>We were unable to process your URS details at this time. Please contact support.</p>";
+    echo "<p>We were unable to process your IRS details at this time. Please contact support.</p>";
     echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";
     echo "<a href='../erap-urs-details.html'>Go Back</a>";
     exit();

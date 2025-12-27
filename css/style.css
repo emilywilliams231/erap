@@ -814,18 +814,11 @@ label {
 }
 
 .checkbox-row label {
+    display: inline-block;
+    margin: 0;
     cursor: pointer;
     font-weight: 600;
     color: var(--text-dark);
-    margin-bottom: 0;
-    flex: 1;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
     line-height: 1.5;
 }
 
@@ -909,7 +902,7 @@ input::placeholder {
     gap: 18px;
     margin-top: 10px;
     clear: both;
-    margin-bottom: 10px;
+    margin-bottom: 32px;
 }
 
 .upload-card {
@@ -1013,9 +1006,9 @@ footer {
     background: #ffffff;
     border-radius: 18px;
     border: 1px solid #d9e2ec;
-    box-shadow: 0 24px 60px rgba(16, 42, 67, 0.12);
-    padding: 28px 30px;
-    max-width: 900px;
+    box-shadow: 0 24px 60px rgba(16, 42, 67, 0.12), 0 40px 80px rgba(16, 42, 67, 0.10);
+    padding: 32px 34px;
+    max-width: 940px;
     width: 100%;
 }
 
@@ -1024,41 +1017,59 @@ footer {
     letter-spacing: 1.2px;
     color: #4c6fff;
     font-weight: 800;
-    font-size: 0.78rem;
-    margin-bottom: 12px;
+    font-size: 0.8rem;
+    margin-bottom: 14px;
 }
 
 .prompt-title {
-    font-size: 2rem;
+    font-size: 2.15rem;
     color: #102a43;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .prompt-body {
     color: #334e68;
     line-height: 1.7;
-    margin-bottom: 12px;
-    font-size: 1rem;
+    margin-bottom: 16px;
+    font-size: 1.02rem;
 }
 
 .prompt-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 18px;
+    margin-top: 20px;
 }
 
 .prompt-action {
     width: auto;
     margin-top: 0;
-    min-width: 140px;
+    min-width: 150px;
     text-align: center;
+    border-radius: 999px;
+    padding: 12px 18px;
 }
 
 .prompt-footnote {
     margin-top: 14px;
     color: #52606d;
     font-size: 0.9rem;
+}
+
+.prompt-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.prompt-link:hover {
+    text-decoration: underline;
+}
+
+.prompt-divider {
+    height: 1px;
+    background: #d9e2ec;
+    margin: 6px 0 20px 0;
 }
 
 .btn-submit:disabled {
