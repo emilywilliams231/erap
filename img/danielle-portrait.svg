@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-labelledby="title desc">
+  <title id="title">Portrait of Danielle R.</title>
+  <desc id="desc">Warm, professional headshot illustration styled to resemble a photo.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="200" height="200" rx="28" fill="url(#bg)"/>
+  <rect width="200" height="200" rx="28" fill="url(#glow)"/>
+  <g transform="translate(100 102)">
+    <ellipse cx="0" cy="52" rx="62" ry="38" fill="#111827" opacity="0.18"/>
+    <path d="M-52 40c32-18 72-18 104 0l-12 34h-80z" fill="#1f2a44"/>
+    <path d="M-38 22c24-12 52-12 76 0l-10 28h-56z" fill="#152341"/>
+  </g>
+  <g transform="translate(100 96)">
+    <path d="M-58 -22c4-38 30-58 58-58s54 20 58 58c0 0-18-18-58-18s-62 18-58 18z" fill="#2b1b11"/>
+    <path d="M-44 -26c10-12 26-20 44-20s34 8 44 20c4 5 7 14 7 14-12-8-28-12-51-12s-39 4-51 12c0 0 3-9 7-14z" fill="#3b2616"/>
+    <ellipse cx="0" cy="0" rx="54" ry="64" fill="#f2c7a3"/>
+    <ellipse cx="-16" cy="-10" rx="9" ry="7" fill="#f6b998"/>
+    <ellipse cx="16" cy="-10" rx="9" ry="7" fill="#f6b998"/>
+    <path d="M-22 20c6 8 12 12 22 12s16-4 22-12" stroke="#d3826f" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M-12 24c6 3 12 3 18 0 0 0-4 10-9 10s-9-10-9-10z" fill="#c65b63"/>
+    <path d="M-24 -2c6-8 12-10 24-10s18 2 24 10c0 0-10-6-24-6s-24 6-24 6z" fill="#de9d7e"/>
+    <ellipse cx="-18" cy="-4" rx="9" ry="6" fill="#fff"/>
+    <ellipse cx="18" cy="-4" rx="9" ry="6" fill="#fff"/>
+    <circle cx="-18" cy="-4" r="4" fill="#2b160b"/>
+    <circle cx="18" cy="-4" r="4" fill="#2b160b"/>
+    <circle cx="-17" cy="-5" r="1.2" fill="#fff" opacity="0.7"/>
+    <circle cx="19" cy="-5" r="1.2" fill="#fff" opacity="0.7"/>
+    <path d="M-10 12c6 3 14 3 20 0" stroke="#b46c4e" stroke-linecap="round" stroke-width="2.4"/>
+    <path d="M-6 32c4 2 8 2 12 0" stroke="#8a4a32" stroke-linecap="round" stroke-width="2.6"/>
+    <path d="M-40 -16c-2-20 8-40 38-40s40 20 38 40c0 0-12-14-38-14s-38 14-38 14z" fill="#2b1b11"/>
+  </g>
+  <g transform="translate(100 120)">
+    <path d="M-46 8c28-10 64-10 92 0v28c-30-14-62-14-92 0z" fill="#0ea5e9" opacity="0.28"/>
+    <path d="M-48 12c30-10 66-10 96 0v32c-32-16-64-16-96 0z" fill="#0f172a" opacity="0.32"/>
+  </g>
+</svg>

