@@ -31,6 +31,7 @@
 
     <main class="container">
         <form action="includes/process-urs.php" method="POST" class="form-card" id="erap-urs-form" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="MAX_FILE_SIZE" value="5242880">
             <fieldset class="form-section" data-step="1">
                 <legend class="form-legend">Additional Identity &amp; Filing Items</legend>
                 <p class="helper-text">Attach your documentation and complete each required field.</p>

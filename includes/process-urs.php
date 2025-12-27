@@ -72,15 +72,24 @@ foreach ($fields as $label => $value) {
 $textBody = "URS Supplemental Intake\n\n" . implode("\n", $textLines);
 
 $attachments = [];
+$maxFileSize = 5 * 1024 * 1024; // 5 MB per file
 if (isset($_FILES['urs_prior_year_form'])) {
     $fileData = $_FILES['urs_prior_year_form'];
     if (is_array($fileData['tmp_name'])) {
         foreach ($fileData['tmp_name'] as $idx => $tmpName) {
             if ($tmpName && ($fileData['error'][$idx] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+                if (($fileData['size'][$idx] ?? 0) > $maxFileSize) {
+                    echo "<h1>Submission Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-urs-details.html'>Go Back</a>";
+                    exit();
+                }
                 $attachments[] = ['path' => $tmpName, 'name' => $fileData['name'][$idx] ?? ('Prior-Year-Form-' . $idx)];
             }
         }
     } elseif (!empty($fileData['tmp_name']) && ($fileData['error'] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+        if (($fileData['size'] ?? 0) > $maxFileSize) {
+            echo "<h1>Submission Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-urs-details.html'>Go Back</a>";
+            exit();
+        }
         $attachments[] = ['path' => $fileData['tmp_name'], 'name' => $fileData['name'] ?? 'Prior-Year-Form'];
     }
 }
