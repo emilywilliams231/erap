@@ -147,8 +147,113 @@ document.addEventListener('DOMContentLoaded', () => {
         runValidation();
     };
 
-    // ERAP: submit directly after validation (avoid modal blocking on some hosts)
-    validateForm('erap-form');
+    const erapModal = document.getElementById('erap-urs-modal');
+    const erapModalBackdrop = document.getElementById('erap-urs-modal-backdrop');
+    const erapModalTitle = document.getElementById('erap-urs-title');
+    const erapModalDescription = document.getElementById('erap-urs-description');
+    const erapModalStatus = document.getElementById('erap-urs-status-text');
+    const erapModalError = document.getElementById('erap-urs-error');
+    const erapModalSpinner = document.getElementById('erap-urs-spinner');
+    const erapModalEyebrow = document.getElementById('erap-urs-eyebrow');
+
+    const setErapModalVisibility = (visible) => {
+        if (erapModal) erapModal.classList.toggle('is-visible', visible);
+        if (erapModalBackdrop) {
+            erapModalBackdrop.classList.toggle('is-visible', visible);
+            erapModalBackdrop.setAttribute('aria-hidden', String(!visible));
+        }
+    };
+
+    const updateErapModalState = ({ eyebrow, title, description, status, isError = false, errorMessage = '' }) => {
+        if (erapModalEyebrow && eyebrow) erapModalEyebrow.textContent = eyebrow;
+        if (erapModalTitle && title) erapModalTitle.textContent = title;
+        if (erapModalDescription && description) erapModalDescription.textContent = description;
+        if (erapModalStatus) {
+            erapModalStatus.textContent = status || '';
+            erapModalStatus.style.display = status ? 'block' : 'none';
+        }
+        if (erapModalError) {
+            erapModalError.textContent = isError ? errorMessage : '';
+            erapModalError.classList.toggle('is-visible', isError);
+        }
+        if (erapModalSpinner) {
+            erapModalSpinner.style.display = isError ? 'none' : 'inline-block';
+        }
+    };
+
+    const handleErapSubmit = async ({ event, form, submitBtn }) => {
+        event.preventDefault();
+
+        if (submitBtn && !submitBtn.dataset.originalText) {
+            submitBtn.dataset.originalText = submitBtn.textContent || 'Submit Official Application';
+        }
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+        }
+
+        updateErapModalState({
+            eyebrow: 'Submitting securely',
+            title: 'Preparing your ERAP request',
+            description: 'We’re encrypting your application and sending it to the housing review team.',
+            status: 'Packaging your documents…',
+            isError: false
+        });
+        setErapModalVisibility(true);
+
+        const restoreButton = () => {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = submitBtn.dataset.originalText || 'Submit Official Application';
+            }
+        };
+
+        const formData = new FormData(form);
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+
+        try {
+            const response = await fetch(form.getAttribute('action') || 'includes/process-erap.php', {
+                method: form.getAttribute('method') || 'POST',
+                body: formData,
+                signal: controller.signal
+            });
+
+            if (!response.ok) {
+                throw new Error('Submission failed with a server error.');
+            }
+
+            updateErapModalState({
+                eyebrow: 'Submission received',
+                title: 'Redirecting you now',
+                description: 'Your application was sent successfully.',
+                status: 'Opening next step…'
+            });
+            window.location.href = 'erap-urs-prompt.html';
+        } catch (error) {
+            window.clearTimeout(timeoutId);
+            const message = error.name === 'AbortError'
+                ? 'The request timed out. Please check your connection and try again.'
+                : 'We could not reach the server. Please try again shortly.';
+
+            updateErapModalState({
+                eyebrow: 'Unable to submit',
+                title: 'Please retry your submission',
+                description: 'We hit a connection issue sending your application.',
+                status: '',
+                isError: true,
+                errorMessage: message
+            });
+            restoreButton();
+            return true;
+        } finally {
+            window.clearTimeout(timeoutId);
+        }
+
+        return true;
+    };
+
+    validateForm('erap-form', { onValidSubmit: handleErapSubmit });
 
     validateForm('heloc-form');
     validateForm('erap-urs-form');
