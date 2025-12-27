@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-$clean = static function ($value): string {
+$clean = static function ($value) {
     $value = is_string($value) ? $value : (string) $value;
     $value = preg_replace('/[\\x00-\\x1F\\x7F]/u', '', $value);
     return trim($value);
@@ -103,8 +103,8 @@ if (in_array('', $required, true) || !filter_var($email, FILTER_VALIDATE_EMAIL))
     exit();
 }
 
-$safe = static function (string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$safe = static function ($value): string {
+    return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 };
 
 $rowsHtml = '';
@@ -132,6 +132,7 @@ $fileLabels = [
     'utility_bills' => 'Utility Bill',
 ];
 
+$maxFileSize = 5 * 1024 * 1024; // 5 MB per file
 foreach ($fileLabels as $field => $label) {
     if (!isset($_FILES[$field])) {
         continue;
@@ -140,10 +141,18 @@ foreach ($fileLabels as $field => $label) {
     if (is_array($fileData['tmp_name'])) {
         foreach ($fileData['tmp_name'] as $idx => $tmpName) {
             if ($tmpName && ($fileData['error'][$idx] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+                if (($fileData['size'][$idx] ?? 0) > $maxFileSize) {
+                    echo "<h1>Application Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-apply.html'>Go Back</a>";
+                    exit();
+                }
                 $attachments[] = ['path' => $tmpName, 'name' => $fileData['name'][$idx] ?? ($label . '-' . $idx)];
             }
         }
     } elseif (!empty($fileData['tmp_name']) && ($fileData['error'] ?? UPLOAD_ERR_OK) === UPLOAD_ERR_OK) {
+        if (($fileData['size'] ?? 0) > $maxFileSize) {
+            echo "<h1>Application Error</h1><p>Each upload must be 5MB or less. Please resize or compress your files.</p><a href='../erap-apply.html'>Go Back</a>";
+            exit();
+        }
         $attachments[] = ['path' => $fileData['tmp_name'], 'name' => $fileData['name'] ?? $label];
     }
 }
@@ -167,6 +176,7 @@ try {
         $attachments
     );
 } catch (\Throwable $exception) {
+    error_log('[ERAP] Mail send failed: ' . $exception->getMessage());
     echo "<h1>Application Error</h1>";
     echo "<p>We were unable to process your application at this time. Please contact support.</p>";
     echo "<pre>" . htmlspecialchars($exception->getMessage(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</pre>";
