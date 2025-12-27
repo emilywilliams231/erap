@@ -55,6 +55,7 @@
             <button class="step" type="button" data-target="#erap-signature">7. Signature</button>
         </div>
         <form action="includes/process-erap.php" method="POST" class="form-card" id="erap-form" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="MAX_FILE_SIZE" value="5242880">
             <div class="readiness-card">
                 <h2>Before you start</h2>
                 <p class="helper-text">Have these items nearby to finish faster and avoid pauses.</p>
