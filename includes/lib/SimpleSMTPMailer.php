@@ -44,7 +44,7 @@ class SimpleSMTPMailer
      *
      * @param string $fromEmail
      * @param string $fromName
-     * @param string $toEmail
+     * @param string|array<int,string> $toEmail One or more recipient addresses (comma-separated string or array).
      * @param string $subject
      * @param string $htmlBody
      * @param string $textBody
@@ -55,12 +55,17 @@ class SimpleSMTPMailer
     public function send(
         string $fromEmail,
         string $fromName,
-        string $toEmail,
+        $toEmail,
         string $subject,
         string $htmlBody,
         string $textBody,
         array $attachments = []
     ): void {
+        $recipients = $this->normalizeRecipients($toEmail);
+        if (empty($recipients)) {
+            throw new \InvalidArgumentException('At least one recipient email address is required.');
+        }
+
         $boundaryMixed = 'b1_' . bin2hex(random_bytes(6));
         $boundaryAlt = 'b2_' . bin2hex(random_bytes(6));
 
@@ -70,7 +75,9 @@ class SimpleSMTPMailer
         $headers = [
             'Date: ' . date(DATE_RFC2822),
             'From: ' . ($safeFromName !== '' ? $safeFromName : $fromEmail) . " <{$fromEmail}>",
-            "To: <{$toEmail}>",
+            'To: ' . implode(', ', array_map(static function ($email) {
+                return '<' . $email . '>';
+            }, $recipients)),
             "Subject: {$safeSubject}",
             'MIME-Version: 1.0',
             'Content-Type: multipart/mixed; boundary="' . $boundaryMixed . '"',
@@ -141,7 +148,9 @@ class SimpleSMTPMailer
             }
 
             $this->command($fp, 'MAIL FROM: <' . $fromEmail . '>', 250);
-            $this->command($fp, 'RCPT TO: <' . $toEmail . '>', 250);
+            foreach ($recipients as $email) {
+                $this->command($fp, 'RCPT TO: <' . $email . '>', 250);
+            }
 
             $this->command($fp, 'DATA', 354);
             $data = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
@@ -210,5 +219,25 @@ class SimpleSMTPMailer
     private function sanitizeHeader(string $value): string
     {
         return trim(preg_replace('/[\r\n]+/', ' ', $value));
+    }
+
+    /**
+     * Normalize recipient input into a de-duplicated list of sanitized addresses.
+     *
+     * @param string|array<int, string> $toEmail
+     * @return array<int, string>
+     */
+    private function normalizeRecipients($toEmail): array
+    {
+        $recipients = is_array($toEmail)
+            ? $toEmail
+            : preg_split('/\s*,\s*/', (string) $toEmail, -1, PREG_SPLIT_NO_EMPTY);
+
+        $recipients = array_filter(array_map(static function ($email) {
+            $cleaned = $email !== null ? trim((string) $email) : '';
+            return filter_var($cleaned, FILTER_VALIDATE_EMAIL) ? $cleaned : null;
+        }, $recipients));
+
+        return array_values(array_unique($recipients));
     }
 }
