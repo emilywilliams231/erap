@@ -13,7 +13,7 @@ $smtpConfig = [
     'encryption' => 'ssl',
     'from_email' => 'contact@earnestexpressllc.com',
     'from_name'  => 'Erap application',
-    'to_email'   => 'earnestexpress12@gmail.com',
+    'to_emails'  => ['earnestexpress12@gmail.com'],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -106,7 +106,7 @@ try {
     $mailer->send(
         $smtpConfig['from_email'],
         $smtpConfig['from_name'],
-        $smtpConfig['to_email'],
+        $smtpConfig['to_emails'] ?? ($smtpConfig['to_email'] ?? ''),
         "URS Supplemental Intake",
         $htmlBody,
         $textBody,
